@@ -13,7 +13,7 @@ A local DHIS2 development environment using Docker Compose, with a pre-loaded Si
 
 ```bash
 # Clone the repo
-git clone https://github.com/lolleh/dhis2-demo-server.git
+git clone https://github.com/lolleh/dhis2-demo-server
 cd dhis2-demo-server
 
 # Start the server
