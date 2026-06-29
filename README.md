@@ -106,7 +106,45 @@ This starts a second DHIS2 instance on port 8082 with its own database on port 5
 
 ### Port already in use
 
-If a port is already in use, edit the `ports` section in `docker-compose.yml` and change the host port (the left side of the mapping).
+If you see an error like `Bind for 127.0.0.1:<port> failed: port is already allocated`, a process on your host is already using that port.
+
+#### Option 1: Kill the process using the port
+
+Find the process and stop it:
+
+```bash
+# Linux / macOS
+sudo lsof -i :<port>     # e.g., sudo lsof -i :5435
+sudo kill -9 <PID>
+```
+
+```powershell
+# Windows (PowerShell)
+netstat -ano | findstr :<port>
+taskkill /PID <PID> /F
+```
+
+#### Option 2: Change the host port
+
+Edit `docker-compose.yml` and change the host port (the left side of the mapping). For example, to change the database port from `5435` to `5436`:
+
+```yaml
+ports:
+  - "127.0.0.1:5436:5432"
+```
+
+Common ports mapped by this project and the services they expose:
+
+| Service | Default Host Port | Container Port | Purpose |
+|---------|-------------------|---------------|---------|
+| web | `8091` | `8080` | DHIS2 application |
+| web | `8089` | `8081` | JDWP debugger |
+| web | `9011` | `9010` | JMX monitoring |
+| db | `5435` | `5432` | PostgreSQL |
+| web-sync | `8082` | `8080` | Sync instance |
+| web-sync | `8083` | `8081` | Sync debugger |
+| web-sync | `9012` | `9010` | Sync JMX |
+| db-sync | `5434` | `5432` | Sync PostgreSQL |
 
 ### Container can't resolve hostname
 

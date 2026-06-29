@@ -11,6 +11,7 @@ x-web-base: &web-base
     JAVA_TOOL_OPTIONS:
       "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8081 \
       -Dlog4j2.configurationFile=/opt/dhis2/log4j2.xml
+      -Djava.rmi.server.hostname=127.0.0.1 \
       -Dcom.sun.management.jmxremote \
       -Dcom.sun.management.jmxremote.port=9010 \
       -Dcom.sun.management.jmxremote.local.only=false \
