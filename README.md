@@ -78,6 +78,20 @@ Examples of alternative dumps:
 - **Sierra Leone (30 days)**: `https://databases.dhis2.org/sierra-leone/30d/dhis2-db-sierra-leone.sql.gz`
 - **Sierra Leone (1 year)**: `https://databases.dhis2.org/sierra-leone/1y/dhis2-db-sierra-leone.sql.gz`
 
+## Custom App Development
+
+This project includes a DHIS2 custom app in the `my-app/` directory.
+
+### Running the Dev Server
+
+```bash
+cd my-app
+npm install
+npm start
+```
+
+The dev server will start at [http://localhost:3000](http://localhost:3000) and proxy API requests to the DHIS2 instance on port 8091.
+
 ## Sync Profile
 
 Run two DHIS2 instances for testing data/metadata sync:

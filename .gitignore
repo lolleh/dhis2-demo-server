@@ -1,1 +1,5 @@
 .env
+node_modules/
+my-app/build/
+my-app/.d2/shell/build/
+my-app/dev-server.log

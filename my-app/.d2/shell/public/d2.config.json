@@ -1,0 +1,12 @@
+{
+  "type": "app",
+  "name": "my-app",
+  "title": "My App",
+  "description": "A custom DHIS2 app",
+  "coreVersion": "2.44",
+  "baseUrl": "http://localhost:8091",
+  "version": "1.0.0",
+  "entryPoints": {
+    "app": "index.html"
+  }
+}
