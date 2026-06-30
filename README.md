@@ -2,48 +2,19 @@
 
 > Developed by [vlolleh](https://github.com/lolleh) — DHIS2-OpenMRS bi-directional data synchronization bridge with a DHIS2 custom app dashboard.
 
-A full-stack interoperability solution for synchronizing patient and aggregate data between **DHIS2** and **OpenMRS**. Includes a backend bridge service (Node.js/Express + SQLite) and a DHIS2 custom app (React) for managing mappings, running sync jobs, and monitoring activity.
-
-## Architecture
-
-```
-┌──────────────────────────────────────────────────────┐
-│                  DHIS2 Custom App                     │
-│    Dashboard │ Mappings │ Sync Logs │ Manual Sync     │
-└──────────────────────────┬───────────────────────────┘
-                           │ HTTP (CORS)
-┌──────────────────────────▼───────────────────────────┐
-│                 Bridge Service                         │
-│              http://localhost:4000                     │
-│  ┌──────────┐ ┌───────────┐ ┌──────────────────┐    │
-│  │ Mapping  │ │ Sync      │ │ DHIS2 / OpenMRS  │    │
-│  │ Engine   │ │ Scheduler │ │ API Clients      │    │
-│  └──────────┘ └───────────┘ └──────────────────┘    │
-└──────┬────────────────────────────────────┬───────────┘
-       │                                    │
-┌──────▼──────────┐              ┌─────────▼──────────┐
-│     DHIS2       │              │      OpenMRS        │
-│  http://:8091   │              │  (configurable)      │
-└─────────────────┘              └────────────────────┘
-```
-
-## Features
-
-- **Dashboard** — System health (DHIS2/OpenMRS/Bridge), sync statistics (total runs, success rate, last sync), recent sync activity, Run All Mappings button
-- **Data Mappings** — Create, edit, and delete mappings between source and target resources; search/filter bar; per-mapping "Run Sync" with confirmation spinner; delete confirmation dialog
-- **Sync Logs** — Paginated log viewer with status filters (by mapping, by status), duration and timestamps
-- **Bi-directional Sync** — OpenMRS → DHIS2 and DHIS2 → OpenMRS data flow support
-- **Notifications** — Toast/snackbar feedback for all operations (success/error)
-- **Persistent Storage** — SQLite-backed mapping store and sync history
+A full-stack interoperability solution for synchronizing data between **DHIS2** and **OpenMRS**. Includes a backend bridge service (Node.js/Express + SQLite) and a DHIS2 custom app (React) for managing mappings, running sync jobs, and monitoring activity.
 
 ## Quick Start
 
-### Prerequisites
+### 1. Install Docker
 
-- Docker & Docker Compose
-- DHIS2 instance (or use the included docker-compose)
+- **Windows / macOS**: Install [Docker Desktop](https://docs.docker.com/desktop/)
+- **Linux**: Install Docker Engine & Docker Compose
+- **Windows (alternative)**: Install [WSL 2](https://learn.microsoft.com/en-us/windows/wsl/install) + Docker Desktop with WSL 2 backend
 
-### Start everything
+> On Windows, make sure the project drive (e.g. `C:\`) is shared in Docker Desktop → Settings → Resources → File Sharing.
+
+### 2. Start everything
 
 ```bash
 docker compose up -d
@@ -51,49 +22,27 @@ docker compose up -d
 
 This starts DHIS2 (port 8091), the bridge service (port 4000), PostgreSQL, and the app dev server (port 3000).
 
-### Access the app
+> First run downloads a ~200MB Sierra Leone demo database — this takes a few minutes.
+
+### 3. Access the app
+
+| Service | URL | Description |
+|---------|-----|-------------|
+| DHIS2 | http://localhost:8091 | Log in: `admin` / `district` |
+| Custom App | http://localhost:3000 | Dev server with hot-reload |
+| Bridge API | http://localhost:4000 | Backend API |
 
 Open DHIS2 at **http://localhost:8091** and find **Interoperability Bridge** in the Apps menu.
 
-Or access the dev server directly at **http://localhost:3000** for hot-reload development.
-
-## Services
-
-| Service | URL | Port |
-|---------|-----|------|
-| DHIS2 | http://localhost:8091 | 8091 |
-| Bridge API | http://localhost:4000 | 4000 |
-| Dev Server (app) | http://localhost:3000 | 3000 |
-
-## Bridge API
-
-### System Status
+## API Endpoints
 
 ```bash
+# Check health
 curl http://localhost:4000/api/status/health
-curl http://localhost:4000/api/status/dhis2
-curl http://localhost:4000/api/status/openmrs
-```
 
-### Data Mappings
-
-```bash
-# List
+# List mappings
 curl http://localhost:4000/api/mappings
 
-# Create
-curl -X POST http://localhost:4000/api/mappings \
-  -H "Content-Type: application/json" \
-  -d '{"name":"Patients to TEI","direction":"omrs2dhis2","source_resource":"patient","target_resource":"trackedEntityInstance"}'
-
-# Update / Delete
-curl -X PUT http://localhost:4000/api/mappings/1 -d '{"enabled":true}'
-curl -X DELETE http://localhost:4000/api/mappings/1
-```
-
-### Sync
-
-```bash
 # Run sync
 curl -X POST http://localhost:4000/api/sync/run/1
 
@@ -101,9 +50,28 @@ curl -X POST http://localhost:4000/api/sync/run/1
 curl http://localhost:4000/api/sync/logs
 ```
 
-## Configuration
+## Development
 
-### Bridge service (docker-compose.yml)
+### Bridge service
+
+```bash
+cd bridge
+npm install
+npm run dev     # http://localhost:4000
+```
+
+### DHIS2 custom app
+
+```bash
+cd my-app
+npm install
+npm start       # http://localhost:3000
+npm run build   # production build
+```
+
+### Running without Docker
+
+You can run the bridge and app locally while pointing to an external DHIS2 instance. Set these environment variables:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
@@ -113,29 +81,6 @@ curl http://localhost:4000/api/sync/logs
 | `OPENMRS_URL` | `http://openmrs:8080/openmrs` | OpenMRS internal URL |
 | `OPENMRS_USERNAME` | `admin` | OpenMRS API user |
 | `OPENMRS_PASSWORD` | `Admin123` | OpenMRS API password |
-
-### Custom app
-
-The app reads the bridge URL from `REACT_APP_BRIDGE_URL` (defaults to `http://localhost:4000`).
-
-## Development
-
-### Bridge
-
-```bash
-cd bridge
-npm install
-npm run dev
-```
-
-### DHIS2 custom app
-
-```bash
-cd my-app
-npm install
-npm start          # dev server at :3000
-npm run build      # production build → build/bundle/
-```
 
 ## Tech Stack
 
