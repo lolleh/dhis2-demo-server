@@ -67,6 +67,9 @@ services:
 
   db:
     <<: *db-base
+    volumes:
+      - db-dump:/docker-entrypoint-initdb.d/:ro
+      - pg-data:/var/lib/postgresql/data
     ports:
       - "127.0.0.1:5435:5432"
 
@@ -125,3 +128,4 @@ services:
 
 volumes:
   db-dump: {}
+  pg-data:

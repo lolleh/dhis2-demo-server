@@ -24,7 +24,7 @@ docker compose up -d
 
 ```powershell
 # Clone the repo
-git clone https://github.com/lolleh/dhis2-demo-server
+git clone https://github.com/lolleh/dhis2-demo-server.git
 cd dhis2-demo-server
 
 # Start the server
