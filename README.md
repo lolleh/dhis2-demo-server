@@ -1,183 +1,145 @@
-# DHIS2 Demo Server
+# Interoperability Bridge
 
-A local DHIS2 development environment using Docker Compose, with a pre-loaded Sierra Leone demo database.
+> Developed by [vlolleh](https://github.com/lolleh) — DHIS2-OpenMRS bi-directional data synchronization bridge with a DHIS2 custom app dashboard.
 
-## Prerequisites
+A full-stack interoperability solution for synchronizing patient and aggregate data between **DHIS2** and **OpenMRS**. Includes a backend bridge service (Node.js/Express + SQLite) and a DHIS2 custom app (React) for managing mappings, running sync jobs, and monitoring activity.
 
-- [Docker](https://docs.docker.com/get-docker/)
-- [Docker Compose](https://docs.docker.com/compose/install/) (V2, included with Docker Desktop)
+## Architecture
+
+```
+┌──────────────────────────────────────────────────────┐
+│                  DHIS2 Custom App                     │
+│    Dashboard │ Mappings │ Sync Logs │ Manual Sync     │
+└──────────────────────────┬───────────────────────────┘
+                           │ HTTP (CORS)
+┌──────────────────────────▼───────────────────────────┐
+│                 Bridge Service                         │
+│              http://localhost:4000                     │
+│  ┌──────────┐ ┌───────────┐ ┌──────────────────┐    │
+│  │ Mapping  │ │ Sync      │ │ DHIS2 / OpenMRS  │    │
+│  │ Engine   │ │ Scheduler │ │ API Clients      │    │
+│  └──────────┘ └───────────┘ └──────────────────┘    │
+└──────┬────────────────────────────────────┬───────────┘
+       │                                    │
+┌──────▼──────────┐              ┌─────────▼──────────┐
+│     DHIS2       │              │      OpenMRS        │
+│  http://:8091   │              │  (configurable)      │
+└─────────────────┘              └────────────────────┘
+```
+
+## Features
+
+- **Dashboard** — System health (DHIS2/OpenMRS/Bridge), sync statistics (total runs, success rate, last sync), recent sync activity, Run All Mappings button
+- **Data Mappings** — Create, edit, and delete mappings between source and target resources; search/filter bar; per-mapping "Run Sync" with confirmation spinner; delete confirmation dialog
+- **Sync Logs** — Paginated log viewer with status filters (by mapping, by status), duration and timestamps
+- **Bi-directional Sync** — OpenMRS → DHIS2 and DHIS2 → OpenMRS data flow support
+- **Notifications** — Toast/snackbar feedback for all operations (success/error)
+- **Persistent Storage** — SQLite-backed mapping store and sync history
 
 ## Quick Start
 
-### Linux / macOS
+### Prerequisites
+
+- Docker & Docker Compose
+- DHIS2 instance (or use the included docker-compose)
+
+### Start everything
 
 ```bash
-# Clone the repo
-git clone https://github.com/lolleh/dhis2-demo-server
-cd dhis2-demo-server
-
-# Start the server
 docker compose up -d
 ```
 
-### Windows (PowerShell)
+This starts DHIS2 (port 8091), the bridge service (port 4000), PostgreSQL, and the app dev server (port 3000).
 
-```powershell
-# Clone the repo
-git clone https://github.com/lolleh/dhis2-demo-server.git
-cd dhis2-demo-server
+### Access the app
 
-# Start the server
-docker compose up -d
-```
+Open DHIS2 at **http://localhost:8091** and find **Interoperability Bridge** in the Apps menu.
 
-DHIS2 will be available at [http://localhost:8091](http://localhost:8091).
-
-> **Note:** If port 8091 is in use, edit `docker-compose.yml` and change the left side of `"127.0.0.1:8091:8080"` to a free port.
-
-## Default Credentials
-
-| Username | Password |
-|----------|----------|
-| `admin` | `district` |
+Or access the dev server directly at **http://localhost:3000** for hot-reload development.
 
 ## Services
 
-| Service | URL | Purpose |
-|---------|-----|---------|
-| DHIS2 | `http://localhost:8091` | Main application |
-| Debugger | `localhost:8089` | JDWP debug port |
-| JMX | `localhost:9011` | JMX monitoring |
-| Database | `localhost:5435` | PostgreSQL 16 + PostGIS |
+| Service | URL | Port |
+|---------|-----|------|
+| DHIS2 | http://localhost:8091 | 8091 |
+| Bridge API | http://localhost:4000 | 4000 |
+| Dev Server (app) | http://localhost:3000 | 3000 |
+
+## Bridge API
+
+### System Status
+
+```bash
+curl http://localhost:4000/api/status/health
+curl http://localhost:4000/api/status/dhis2
+curl http://localhost:4000/api/status/openmrs
+```
+
+### Data Mappings
+
+```bash
+# List
+curl http://localhost:4000/api/mappings
+
+# Create
+curl -X POST http://localhost:4000/api/mappings \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Patients to TEI","direction":"omrs2dhis2","source_resource":"patient","target_resource":"trackedEntityInstance"}'
+
+# Update / Delete
+curl -X PUT http://localhost:4000/api/mappings/1 -d '{"enabled":true}'
+curl -X DELETE http://localhost:4000/api/mappings/1
+```
+
+### Sync
+
+```bash
+# Run sync
+curl -X POST http://localhost:4000/api/sync/run/1
+
+# View logs
+curl http://localhost:4000/api/sync/logs
+```
 
 ## Configuration
 
-Copy `.env.example` to `.env` and adjust as needed:
-
-```bash
-cp .env.example .env
-```
-
-### Environment Variables
+### Bridge service (docker-compose.yml)
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `DHIS2_IMAGE` | `dhis2/core-dev:latest` | DHIS2 Docker image |
-| `DB_USERNAME` | `dhis` | Database username |
-| `DB_PASSWORD` | `dhis` | Database password |
-| `DB_NAME` | `dhis` | Database name |
-| `DHIS2_DB_DUMP_URL` | Sierra Leone demo DB URL | URL to a `.sql.gz` database dump |
+| `DHIS2_URL` | `http://web:8080` | DHIS2 internal URL |
+| `DHIS2_USERNAME` | `admin` | DHIS2 API user |
+| `DHIS2_PASSWORD` | `district` | DHIS2 API password |
+| `OPENMRS_URL` | `http://openmrs:8080/openmrs` | OpenMRS internal URL |
+| `OPENMRS_USERNAME` | `admin` | OpenMRS API user |
+| `OPENMRS_PASSWORD` | `Admin123` | OpenMRS API password |
 
-## Database Dumps
+### Custom app
 
-You can use a different database dump via the `DHIS2_DB_DUMP_URL` env variable. Official demo databases are available at [databases.dhis2.org](https://databases.dhis2.org/).
+The app reads the bridge URL from `REACT_APP_BRIDGE_URL` (defaults to `http://localhost:4000`).
 
-Examples of alternative dumps:
+## Development
 
-- **Sierra Leone** (default): `https://databases.dhis2.org/sierra-leone/dev/dhis2-db-sierra-leone.sql.gz`
-- **Sierra Leone (30 days)**: `https://databases.dhis2.org/sierra-leone/30d/dhis2-db-sierra-leone.sql.gz`
-- **Sierra Leone (1 year)**: `https://databases.dhis2.org/sierra-leone/1y/dhis2-db-sierra-leone.sql.gz`
-
-## Custom App Development
-
-This project includes a DHIS2 custom app in the `my-app/` directory.
-
-### Running the Dev Server
-
-#### Via Docker (recommended)
+### Bridge
 
 ```bash
-docker compose up -d my-app
+cd bridge
+npm install
+npm run dev
 ```
 
-The dev server will start at [http://localhost:3000](http://localhost:3000) and proxy API requests to the DHIS2 instance on port 8091.
-
-#### Directly on host
+### DHIS2 custom app
 
 ```bash
 cd my-app
 npm install
-# Remove .d2/ first so the shell node_modules symlink
-# is generated fresh (required for the first run)
-rm -rf .d2
-npm start
+npm start          # dev server at :3000
+npm run build      # production build → build/bundle/
 ```
 
-## Sync Profile
+## Tech Stack
 
-Run two DHIS2 instances for testing data/metadata sync:
-
-```bash
-docker compose --profile sync up -d
-```
-
-This starts a second DHIS2 instance on port 8082 with its own database on port 5434.
-
-## Troubleshooting
-
-### Port already in use
-
-If you see an error like `Bind for 127.0.0.1:<port> failed: port is already allocated`, a process on your host is already using that port.
-
-#### Option 1: Kill the process using the port
-
-Find the process and stop it:
-
-```bash
-# Linux / macOS
-sudo lsof -i :<port>     # e.g., sudo lsof -i :5435
-sudo kill -9 <PID>
-```
-
-```powershell
-# Windows (PowerShell)
-netstat -ano | findstr :<port>
-taskkill /PID <PID> /F
-```
-
-#### Option 2: Change the host port
-
-Edit `docker-compose.yml` and change the host port (the left side of the mapping). For example, to change the database port from `5435` to `5436`:
-
-```yaml
-ports:
-  - "127.0.0.1:5436:5432"
-```
-
-Common ports mapped by this project and the services they expose:
-
-| Service | Default Host Port | Container Port | Purpose |
-|---------|-------------------|---------------|---------|
-| web | `8091` | `8080` | DHIS2 application |
-| web | `8089` | `8081` | JDWP debugger |
-| web | `9011` | `9010` | JMX monitoring |
-| db | `5435` | `5432` | PostgreSQL |
-| web-sync | `8082` | `8080` | Sync instance |
-| web-sync | `8083` | `8081` | Sync debugger |
-| web-sync | `9012` | `9010` | Sync JMX |
-| db-sync | `5434` | `5432` | Sync PostgreSQL |
-
-### Container can't resolve hostname
-
-Ensure all containers are on the same Docker network. Run `docker compose down && docker compose up -d` to recreate them.
-
-### Database dump download fails
-
-The database dump is cached in a Docker volume after the first download. To re-download:
-
-```bash
-docker compose down -v
-docker compose up -d
-```
-
-## Stopping
-
-```bash
-docker compose down
-```
-
-To also remove the database volume:
-
-```bash
-docker compose down -v
-```
+- **Frontend**: React 18, @dhis2/ui, @dhis2/app-runtime, Vite
+- **Backend**: Node.js, Express, better-sqlite3
+- **Data**: DHIS2 REST API, OpenMRS REST API
+- **Infra**: Docker, PostgreSQL 16 + PostGIS
