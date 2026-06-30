@@ -40,6 +40,7 @@ DHIS2 will be available at [http://localhost:8091](http://localhost:8091).
 | Username | Password |
 |----------|----------|
 | `admin` | `district` |
+| `vlolleh` | `Vamba@2026` |
 
 ## Services
 
