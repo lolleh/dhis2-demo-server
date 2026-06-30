@@ -41,7 +41,15 @@ A local DHIS2 development environment using Docker Compose, with a pre-loaded Si
      ```
    - You should see version numbers for both
 
-6. **Clone this repo** (if you haven't already)
+6. **Install Git** (if you don't have it)
+   - Go to [git-scm.com](https://git-scm.com/) and download **Git for Windows**
+   - Run the installer (default settings are fine)
+   - Restart PowerShell, then verify:
+     ```powershell
+     git --version
+     ```
+
+7. **Clone this repo**
    ```powershell
    git clone https://github.com/lolleh/dhis2-demo-server
    cd dhis2-demo-server
