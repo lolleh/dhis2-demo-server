@@ -92,9 +92,9 @@ services:
       - "127.0.0.1:5434:5432"
 
   my-app:
-    image: node:20
+    image: node:20-alpine
     working_dir: /app
-    command: sh -c "npm install && npm start"
+    command: sh -c "rm -rf .d2 && [ -d node_modules ] && npm start || (npm install && npm start)"
     volumes:
       - ./my-app:/app
     ports:

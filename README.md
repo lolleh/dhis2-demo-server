@@ -84,13 +84,24 @@ This project includes a DHIS2 custom app in the `my-app/` directory.
 
 ### Running the Dev Server
 
+#### Via Docker (recommended)
+
 ```bash
-cd my-app
-npm install
-npm start
+docker compose up -d my-app
 ```
 
 The dev server will start at [http://localhost:3000](http://localhost:3000) and proxy API requests to the DHIS2 instance on port 8091.
+
+#### Directly on host
+
+```bash
+cd my-app
+npm install
+# Remove .d2/ first so the shell node_modules symlink
+# is generated fresh (required for the first run)
+rm -rf .d2
+npm start
+```
 
 ## Sync Profile
 
