@@ -1,55 +1,34 @@
-import React from 'react'
-import { DataQuery } from '@dhis2/app-runtime'
-import { CircularLoader, DataTable, DataTableBody, DataTableCell, DataTableColumnHeader, DataTableHead, DataTableRow, TableHead, Button } from '@dhis2/ui'
+import React, { useState } from 'react'
+import { TabBar, Tab } from '@dhis2/ui'
+import Dashboard from './pages/Dashboard'
+import Mappings from './pages/Mappings'
+import SyncLogs from './pages/SyncLogs'
 
-const query = {
-    me: {
-        resource: 'me',
-    },
-    organisationUnits: {
-        resource: 'organisationUnits',
-        params: {
-            fields: ['id', 'displayName', 'level'],
-            pageSize: 10,
-            paging: false,
-        },
-    },
+const PAGES = {
+    dashboard: { label: 'Dashboard', component: Dashboard },
+    mappings: { label: 'Mappings', component: Mappings },
+    syncLogs: { label: 'Sync Logs', component: SyncLogs },
 }
 
-const MyApp = () => (
-    <DataQuery query={query}>
-        {({ error, loading, data }) => {
-            if (error) return <span>ERROR: {error.message}</span>
-            if (loading) return <CircularLoader />
+const InteropApp = () => {
+    const [page, setPage] = useState('dashboard')
+    const PageComponent = PAGES[page].component
 
-            return (
-                <div style={{ padding: 16 }}>
-                    <h1>Welcome, {data.me.displayName}</h1>
+    return (
+        <div style={{ padding: 16 }}>
+            <h1>Interoperability Bridge</h1>
+            <TabBar>
+                {Object.entries(PAGES).map(([key, { label }]) => (
+                    <Tab key={key} selected={page === key} onClick={() => setPage(key)}>
+                        {label}
+                    </Tab>
+                ))}
+            </TabBar>
+            <div style={{ padding: '16px 0' }}>
+                <PageComponent />
+            </div>
+        </div>
+    )
+}
 
-                    <DataTable>
-                        <DataTableHead>
-                            <DataTableRow>
-                                <DataTableColumnHeader>Org Unit</DataTableColumnHeader>
-                                <DataTableColumnHeader>Level</DataTableColumnHeader>
-                            </DataTableRow>
-                        </DataTableHead>
-                        <DataTableBody>
-                            {data.organisationUnits.organisationUnits.map(ou => (
-                                <DataTableRow key={ou.id}>
-                                    <DataTableCell>{ou.displayName}</DataTableCell>
-                                    <DataTableCell>{ou.level}</DataTableCell>
-                                </DataTableRow>
-                            ))}
-                        </DataTableBody>
-                    </DataTable>
-
-                    <Button primary onClick={() => alert('Hello from My App!')}>
-                        Click me
-                    </Button>
-                </div>
-            )
-        }}
-    </DataQuery>
-)
-
-export default MyApp
+export default InteropApp

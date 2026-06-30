@@ -1,8 +1,8 @@
 const config = {
     type: 'app',
-    name: 'my-app',
-    title: 'My App',
-    description: 'A custom DHIS2 app',
+    name: 'interop-bridge',
+    title: 'Interoperability Bridge',
+    description: 'DHIS2-OpenMRS data synchronization',
     entryPoints: {
         app: './src/App.jsx',
     },

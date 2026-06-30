@@ -1,8 +1,8 @@
 {
   "appType": "APP",
-  "short_name": "my-app",
-  "name": "My App",
-  "description": "A custom DHIS2 app",
+  "short_name": "interop-bridge",
+  "name": "Interoperability Bridge",
+  "description": "DHIS2-OpenMRS data synchronization",
   "version": "1.0.0",
   "launch_path": "index.html",
   "default_locale": "en",
@@ -14,7 +14,7 @@
   "icons": {
     "48": "dhis2-app-icon.png"
   },
-  "manifest_generated_at": "Mon Jun 29 2026 11:58:41 GMT+0000 (Greenwich Mean Time)",
+  "manifest_generated_at": "Tue Jun 30 2026 11:48:47 GMT+0000 (Coordinated Universal Time)",
   "display": "standalone",
   "theme_color": "#ffffff",
   "background_color": "#ffffff"
