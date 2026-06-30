@@ -108,6 +108,22 @@ services:
     depends_on:
       - web
 
+  bridge:
+    build: ./bridge
+    ports:
+      - "127.0.0.1:4000:4000"
+    environment:
+      DHIS2_URL: http://web:8080
+      DHIS2_USERNAME: admin
+      DHIS2_PASSWORD: district
+      OPENMRS_URL: ${OPENMRS_URL:-http://openmrs:8080/openmrs}
+      OPENMRS_USERNAME: ${OPENMRS_USERNAME:-admin}
+      OPENMRS_PASSWORD: ${OPENMRS_PASSWORD:-Admin123}
+    volumes:
+      - bridge-data:/app/data
+    depends_on:
+      - web
+
   init-admin:
     image: curlimages/curl:latest
     command: sh /docker/init-admin-user.sh
@@ -129,3 +145,4 @@ services:
 volumes:
   db-dump: {}
   pg-data:
+  bridge-data:
