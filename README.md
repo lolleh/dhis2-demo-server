@@ -55,30 +55,25 @@ A local DHIS2 development environment using Docker Compose, with a pre-loaded Si
    cd dhis2-demo-server
    ```
 
+8. **Start the server**
+   ```powershell
+   docker compose up -d
+   ```
+
+9. **Open DHIS2**
+   - Go to [http://localhost:8091](http://localhost:8091)
+   - Log in with username `admin` and password `district`
+   - The first start downloads a ~200MB database — this takes a few minutes
+
 ### Linux / macOS
 
 ```bash
 # Install Docker Engine + Compose
 # See: https://docs.docker.com/engine/install/
 
-# Then clone and start
+# Clone and start
 git clone https://github.com/lolleh/dhis2-demo-server
 cd dhis2-demo-server
-docker compose up -d
-```
-
-## Quick Start
-
-### Windows (PowerShell)
-
-```powershell
-# Make sure you're in the project folder, then:
-docker compose up -d
-```
-
-### Linux / macOS
-
-```bash
 docker compose up -d
 ```
 
