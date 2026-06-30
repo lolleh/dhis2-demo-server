@@ -4,34 +4,75 @@ A local DHIS2 development environment using Docker Compose, with a pre-loaded Si
 
 ## Prerequisites
 
-- [Docker](https://docs.docker.com/get-docker/)
-- [Docker Compose](https://docs.docker.com/compose/install/) (V2, included with Docker Desktop)
+### Windows — Install Docker Desktop
 
-## Quick Start
+1. **Check virtualization is enabled**
+   - Open **Task Manager** → **Performance** tab
+   - Under "CPU", check that **Virtualization** says **Enabled**
+   - If disabled, enable it in your BIOS/UEFI settings (usually under Advanced → CPU Configuration)
+
+2. **Install WSL 2** (Windows Subsystem for Linux)
+   - Open **PowerShell as Administrator** and run:
+     ```powershell
+     wsl --install
+     ```
+   - Restart your computer when prompted
+   - After reboot, WSL will finish installing Ubuntu automatically
+
+3. **Download & install Docker Desktop**
+   - Go to [docs.docker.com/desktop/](https://docs.docker.com/desktop/)
+   - Download **Docker Desktop for Windows**
+   - Run the installer and follow the prompts
+
+4. **Configure Docker Desktop**
+   - Launch Docker Desktop
+   - Go to **Settings** → **General** and check **Use WSL 2 based engine**
+   - Go to **Settings** → **Resources** → **WSL Integration**
+     - Enable integration with your WSL distro (e.g. Ubuntu)
+   - Go to **Settings** → **Resources** → **File Sharing**
+     - Make sure the drive where this project is located (e.g. `C:\`) is listed
+   - Click **Apply & Restart**
+
+5. **Verify Docker is working**
+   - Open **PowerShell** and run:
+     ```powershell
+     docker --version
+     docker compose version
+     ```
+   - You should see version numbers for both
+
+6. **Clone this repo** (if you haven't already)
+   ```powershell
+   git clone https://github.com/lolleh/dhis2-demo-server
+   cd dhis2-demo-server
+   ```
 
 ### Linux / macOS
 
 ```bash
-# Clone the repo
+# Install Docker Engine + Compose
+# See: https://docs.docker.com/engine/install/
+
+# Then clone and start
 git clone https://github.com/lolleh/dhis2-demo-server
 cd dhis2-demo-server
-
-# Start the server
 docker compose up -d
 ```
+
+## Quick Start
 
 ### Windows (PowerShell)
 
 ```powershell
-# Clone the repo
-git clone https://github.com/lolleh/dhis2-demo-server
-cd dhis2-demo-server
-
-# Start the server
+# Make sure you're in the project folder, then:
 docker compose up -d
 ```
 
-DHIS2 will be available at [http://localhost:8091](http://localhost:8091).
+### Linux / macOS
+
+```bash
+docker compose up -d
+```
 
 > **Note:** If port 8091 is in use, edit `docker-compose.yml` and change the left side of `"127.0.0.1:8091:8080"` to a free port.
 
