@@ -5,6 +5,7 @@
     "license": "BSD-3-Clause",
     "scripts": {
         "start": "d2-app-scripts start",
+        "prebuild": "rm -rf i18n src/locales",
         "build": "d2-app-scripts build",
         "test": "d2-app-scripts test"
     },

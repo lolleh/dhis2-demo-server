@@ -5,3 +5,7 @@ my-app/.d2/shell/build/
 my-app/dev-server.log
 my-app/.d2/shell/node_modules/
 my-app/.d2/shell/public/manifest.webapp
+my-app/.d2/
+my-app/i18n/
+my-app/src/locales/
+my-app/node_modules/
