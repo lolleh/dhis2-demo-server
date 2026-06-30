@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import {
     CircularLoader, NoticeBox, Button, Table, TableBody,
-    TableCell, TableHead, TableRow, TableHeadCell, Modal,
+    TableCell, TableHead, TableRow, TableCellHead, Modal,
     ModalTitle, ModalContent, ModalActions, Input, Field,
     SingleSelect, SingleSelectOption, ButtonStrip
 } from '@dhis2/ui'
@@ -74,12 +74,12 @@ export default function Mappings() {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableHeadCell>Name</TableHeadCell>
-                            <TableHeadCell>Direction</TableHeadCell>
-                            <TableHeadCell>Source</TableHeadCell>
-                            <TableHeadCell>Target</TableHeadCell>
-                            <TableHeadCell>Status</TableHeadCell>
-                            <TableHeadCell>Actions</TableHeadCell>
+                            <TableCellHead>Name</TableCellHead>
+                            <TableCellHead>Direction</TableCellHead>
+                            <TableCellHead>Source</TableCellHead>
+                            <TableCellHead>Target</TableCellHead>
+                            <TableCellHead>Status</TableCellHead>
+                            <TableCellHead>Actions</TableCellHead>
                         </TableRow>
                     </TableHead>
                     <TableBody>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { CircularLoader, NoticeBox, Table, TableBody, TableCell, TableHead, TableRow, TableHeadCell, Button, ButtonStrip } from '@dhis2/ui'
+import { CircularLoader, NoticeBox, Table, TableBody, TableCell, TableHead, TableRow, TableCellHead, Button, ButtonStrip } from '@dhis2/ui'
 import { api } from '../services/api'
 
 export default function SyncLogs() {
@@ -48,12 +48,12 @@ export default function SyncLogs() {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableHeadCell>Mapping</TableHeadCell>
-                            <TableHeadCell>Status</TableHeadCell>
-                            <TableHeadCell>Processed</TableHeadCell>
-                            <TableHeadCell>Failed</TableHeadCell>
-                            <TableHeadCell>Started</TableHeadCell>
-                            <TableHeadCell>Error</TableHeadCell>
+                            <TableCellHead>Mapping</TableCellHead>
+                            <TableCellHead>Status</TableCellHead>
+                            <TableCellHead>Processed</TableCellHead>
+                            <TableCellHead>Failed</TableCellHead>
+                            <TableCellHead>Started</TableCellHead>
+                            <TableCellHead>Error</TableCellHead>
                         </TableRow>
                     </TableHead>
                     <TableBody>

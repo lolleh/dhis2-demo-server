@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { CircularLoader, Card, NoticeBox, Table, TableBody, TableCell, TableHead, TableRow, TableHeadCell } from '@dhis2/ui'
+import { CircularLoader, Card, NoticeBox } from '@dhis2/ui'
 import { api } from '../services/api'
 
 export default function Dashboard() {
