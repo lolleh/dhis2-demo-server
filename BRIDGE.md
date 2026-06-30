@@ -1,6 +1,6 @@
 # Interoperability Bridge
 
-A bi-directional data synchronization bridge between DHIS2 and OpenMRS, with a DHIS2 custom app dashboard for managing mappings and monitoring syncs.
+> Developed by [vlolleh](https://github.com/lolleh) — DHIS2-OpenMRS bi-directional data synchronization bridge with a DHIS2 custom app dashboard.
 
 ## Architecture
 

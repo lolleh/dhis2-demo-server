@@ -30,6 +30,8 @@ app.get('/', (req, res) => {
     res.json({
         name: 'Interop Bridge',
         version: '1.0.0',
+        author: 'vlolleh',
+        description: 'DHIS2-OpenMRS interoperability bridge',
         endpoints: [
             'GET  /api/status/health     - System health check',
             'GET  /api/status/dhis2      - DHIS2 info',

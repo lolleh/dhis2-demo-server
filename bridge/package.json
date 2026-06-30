@@ -1,6 +1,8 @@
 {
     "name": "interop-bridge",
     "version": "1.0.0",
+    "description": "DHIS2-OpenMRS interoperability bridge by vlolleh",
+    "author": "vlolleh",
     "private": true,
     "scripts": {
         "start": "node src/index.js",

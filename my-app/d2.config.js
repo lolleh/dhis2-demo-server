@@ -2,7 +2,8 @@ const config = {
     type: 'app',
     name: 'interop-bridge',
     title: 'Interoperability Bridge',
-    description: 'DHIS2-OpenMRS data synchronization',
+    description: 'DHIS2-OpenMRS data synchronization bridge by vlolleh',
+    author: 'vlolleh',
     entryPoints: {
         app: './src/App.jsx',
     },
