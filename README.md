@@ -154,9 +154,10 @@ Build a deployable ZIP bundle for manual installation in DHIS2:
 ```bash
 cd my-app
 npm run build
+cp build/bundle/interop-bridge-1.0.0.zip ../
 ```
 
-The output is written to `my-app/build/bundle/interop-bridge-1.0.0.zip`.
+The output is written to `my-app/build/bundle/interop-bridge-1.0.0.zip` and copied to the project root as `interop-bridge-1.0.0.zip`.
 
 ### Manual Install in DHIS2
 
