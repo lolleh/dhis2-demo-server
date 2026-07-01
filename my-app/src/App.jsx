@@ -4,6 +4,7 @@ import { ToastProvider } from './components/Toast'
 import Dashboard from './pages/Dashboard'
 import Mappings from './pages/Mappings'
 import SyncLogs from './pages/SyncLogs'
+import './App.css'
 
 const PAGES = {
     dashboard: { label: 'Dashboard', component: Dashboard },
@@ -17,7 +18,7 @@ const InteropApp = () => {
 
     return (
         <ToastProvider>
-            <div style={{ padding: 16 }}>
+            <div className="app-container" style={{ padding: 16 }}>
                 <h1>Interoperability Bridge</h1>
                 <TabBar>
                     {Object.entries(PAGES).map(([key, { label }]) => (

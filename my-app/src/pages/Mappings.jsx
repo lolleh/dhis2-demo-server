@@ -13,6 +13,14 @@ const initialForm = {
     target_resource: '', field_mappings: '{}', schedule: ''
 }
 
+function statusBadge(enabled) {
+    return (
+        <span className={enabled ? 'badge badge-enabled' : 'badge badge-disabled'}>
+            {enabled ? 'Enabled' : 'Disabled'}
+        </span>
+    )
+}
+
 export default function Mappings() {
     const [mappings, setMappings] = useState([])
     const [loading, setLoading] = useState(true)
@@ -96,29 +104,18 @@ export default function Mappings() {
         }
     }
 
-    const statusBadge = (enabled) => (
-        <span style={{
-            display: 'inline-block', padding: '2px 10px', borderRadius: 12,
-            fontSize: 12, fontWeight: 600,
-            backgroundColor: enabled ? '#e0f2f1' : '#f5f5f5',
-            color: enabled ? '#009688' : '#999',
-        }}>
-            {enabled ? 'Enabled' : 'Disabled'}
-        </span>
-    )
-
     if (loading) return <CircularLoader />
     if (error) return <NoticeBox title="Error" error>{error.message}</NoticeBox>
 
     return (
         <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+            <div className="page-header">
                 <h2>Data Mappings</h2>
                 <Button primary onClick={openCreate}>Add Mapping</Button>
             </div>
 
             {mappings.length > 3 && (
-                <div style={{ marginBottom: 16 }}>
+                <div className="search-wrapper">
                     <InputField
                         placeholder="Search mappings..."
                         value={search}
@@ -133,46 +130,48 @@ export default function Mappings() {
                     {search ? 'No mappings match your search.' : 'Create a mapping to start syncing data.'}
                 </NoticeBox>
             ) : (
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCellHead>Name</TableCellHead>
-                            <TableCellHead>Direction</TableCellHead>
-                            <TableCellHead>Source</TableCellHead>
-                            <TableCellHead>Target</TableCellHead>
-                            <TableCellHead>Status</TableCellHead>
-                            <TableCellHead>Actions</TableCellHead>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {filtered.map(m => (
-                            <TableRow key={m.id}>
-                                <TableCell style={{ fontWeight: 500 }}>{m.name}</TableCell>
-                                <TableCell>
-                                    <span style={{ fontSize: 13 }}>
-                                        {m.direction === 'omrs2dhis2' ? 'OpenMRS → DHIS2' : 'DHIS2 → OpenMRS'}
-                                    </span>
-                                </TableCell>
-                                <TableCell style={{ fontSize: 13 }}>{m.source_resource}</TableCell>
-                                <TableCell style={{ fontSize: 13 }}>{m.target_resource}</TableCell>
-                                <TableCell>{statusBadge(m.enabled)}</TableCell>
-                                <TableCell>
-                                    <ButtonStrip>
-                                        <Button small onClick={() => openEdit(m)}>Edit</Button>
-                                        <Button
-                                            small
-                                            onClick={() => runSync(m.id)}
-                                            loading={syncingId === m.id}
-                                        >
-                                            {syncingId === m.id ? 'Syncing...' : 'Run Sync'}
-                                        </Button>
-                                        <Button small destructive onClick={() => setConfirmDelete(m)}>Delete</Button>
-                                    </ButtonStrip>
-                                </TableCell>
+                <div className="table-wrapper">
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCellHead>Name</TableCellHead>
+                                <TableCellHead>Direction</TableCellHead>
+                                <TableCellHead>Source</TableCellHead>
+                                <TableCellHead>Target</TableCellHead>
+                                <TableCellHead>Status</TableCellHead>
+                                <TableCellHead>Actions</TableCellHead>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                        </TableHead>
+                        <TableBody>
+                            {filtered.map(m => (
+                                <TableRow key={m.id}>
+                                    <TableCell style={{ fontWeight: 500 }}>{m.name}</TableCell>
+                                    <TableCell>
+                                        <span className="direction-label">
+                                            {m.direction === 'omrs2dhis2' ? 'OpenMRS → DHIS2' : 'DHIS2 → OpenMRS'}
+                                        </span>
+                                    </TableCell>
+                                    <TableCell className="direction-label">{m.source_resource}</TableCell>
+                                    <TableCell className="direction-label">{m.target_resource}</TableCell>
+                                    <TableCell>{statusBadge(m.enabled)}</TableCell>
+                                    <TableCell>
+                                        <ButtonStrip>
+                                            <Button small onClick={() => openEdit(m)}>Edit</Button>
+                                            <Button
+                                                small
+                                                onClick={() => runSync(m.id)}
+                                                loading={syncingId === m.id}
+                                            >
+                                                {syncingId === m.id ? 'Syncing...' : 'Run Sync'}
+                                            </Button>
+                                            <Button small destructive onClick={() => setConfirmDelete(m)}>Delete</Button>
+                                        </ButtonStrip>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </div>
             )}
 
             {showModal && (
