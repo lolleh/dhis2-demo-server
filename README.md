@@ -124,7 +124,7 @@ Examples of alternative dumps:
 
 ## Custom App Development
 
-This project includes a DHIS2 custom app in the `my-app/` directory.
+This project includes a DHIS2 custom app (`Interoperability Bridge`) in the `my-app/` directory.
 
 ### Running the Dev Server
 
@@ -146,6 +146,28 @@ npm install
 rm -rf .d2
 npm start
 ```
+
+### Building for Production
+
+Build a deployable ZIP bundle for manual installation in DHIS2:
+
+```bash
+cd my-app
+npm run build
+```
+
+The output is written to `my-app/build/bundle/interop-bridge-1.0.0.zip`.
+
+### Manual Install in DHIS2
+
+1. Open your DHIS2 instance and log in as an administrator
+2. Go to **Apps** → **App Management**
+3. Click the **Upload app** button (folder icon with `+`)
+4. Select the ZIP file at `my-app/build/bundle/interop-bridge-1.0.0.zip`
+5. Click **Upload**
+6. The **Interoperability Bridge** app will appear in the DHIS2 app menu
+
+> The app communicates with the Bridge API running at `http://localhost:4000`. In production, configure the bridge URL via the `REACT_APP_BRIDGE_URL` environment variable before building.
 
 ## Sync Profile
 
