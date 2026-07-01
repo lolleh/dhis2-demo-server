@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import {
     CircularLoader, NoticeBox, Button, Table, TableBody,
-    TableCell, TableHead, TableRow, TableHeadCell, Modal,
+    TableCell, TableHead, TableRow, TableCellHead, Modal,
     ModalTitle, ModalContent, ModalActions, Input, Field,
-    SingleSelect, SingleSelectOption, ButtonStrip
+    SingleSelect, SingleSelectOption, ButtonStrip, InputField,
 } from '@dhis2/ui'
 import { api } from '../services/api'
+import { useToast } from '../components/Toast'
 
 const initialForm = {
     name: '', direction: 'omrs2dhis2', source_resource: 'patient',
@@ -19,6 +20,11 @@ export default function Mappings() {
     const [showModal, setShowModal] = useState(false)
     const [editing, setEditing] = useState(null)
     const [form, setForm] = useState(initialForm)
+    const [search, setSearch] = useState('')
+    const [syncingId, setSyncingId] = useState(null)
+    const [confirmDelete, setConfirmDelete] = useState(null)
+    const [saving, setSaving] = useState(false)
+    const showToast = useToast()
 
     const load = () => {
         setLoading(true)
@@ -26,6 +32,10 @@ export default function Mappings() {
     }
 
     useEffect(() => { load() }, [])
+
+    const filtered = mappings.filter(m =>
+        !search || m.name.toLowerCase().includes(search.toLowerCase())
+    )
 
     const openCreate = () => {
         setEditing(null)
@@ -44,19 +54,58 @@ export default function Mappings() {
     }
 
     const save = async () => {
-        if (editing) {
-            await api.updateMapping(editing.id, form)
-        } else {
-            await api.createMapping(form)
+        setSaving(true)
+        try {
+            if (editing) {
+                await api.updateMapping(editing.id, form)
+                showToast('Mapping updated', 'success')
+            } else {
+                await api.createMapping(form)
+                showToast('Mapping created', 'success')
+            }
+            setShowModal(false)
+            load()
+        } catch (e) {
+            showToast(e.message, 'error')
+        } finally {
+            setSaving(false)
         }
-        setShowModal(false)
-        load()
     }
 
     const remove = async (id) => {
-        await api.deleteMapping(id)
-        load()
+        try {
+            await api.deleteMapping(id)
+            showToast('Mapping deleted', 'success')
+            load()
+        } catch (e) {
+            showToast(e.message, 'error')
+        }
+        setConfirmDelete(null)
     }
+
+    const runSync = async (id) => {
+        setSyncingId(id)
+        try {
+            const result = await api.runSync(id)
+            showToast(`Sync completed: ${result.processed} processed, ${result.failed} failed`, 'success')
+            load()
+        } catch (e) {
+            showToast(e.message, 'error')
+        } finally {
+            setSyncingId(null)
+        }
+    }
+
+    const statusBadge = (enabled) => (
+        <span style={{
+            display: 'inline-block', padding: '2px 10px', borderRadius: 12,
+            fontSize: 12, fontWeight: 600,
+            backgroundColor: enabled ? '#e0f2f1' : '#f5f5f5',
+            color: enabled ? '#009688' : '#999',
+        }}>
+            {enabled ? 'Enabled' : 'Disabled'}
+        </span>
+    )
 
     if (loading) return <CircularLoader />
     if (error) return <NoticeBox title="Error" error>{error.message}</NoticeBox>
@@ -68,32 +117,56 @@ export default function Mappings() {
                 <Button primary onClick={openCreate}>Add Mapping</Button>
             </div>
 
-            {mappings.length === 0 ? (
-                <NoticeBox title="No Mappings">Create a mapping to start syncing data.</NoticeBox>
+            {mappings.length > 3 && (
+                <div style={{ marginBottom: 16 }}>
+                    <InputField
+                        placeholder="Search mappings..."
+                        value={search}
+                        onChange={({ value }) => setSearch(value)}
+                        dense
+                    />
+                </div>
+            )}
+
+            {filtered.length === 0 ? (
+                <NoticeBox title={search ? 'No Matches' : 'No Mappings'}>
+                    {search ? 'No mappings match your search.' : 'Create a mapping to start syncing data.'}
+                </NoticeBox>
             ) : (
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableHeadCell>Name</TableHeadCell>
-                            <TableHeadCell>Direction</TableHeadCell>
-                            <TableHeadCell>Source</TableHeadCell>
-                            <TableHeadCell>Target</TableHeadCell>
-                            <TableHeadCell>Status</TableHeadCell>
-                            <TableHeadCell>Actions</TableHeadCell>
+                            <TableCellHead>Name</TableCellHead>
+                            <TableCellHead>Direction</TableCellHead>
+                            <TableCellHead>Source</TableCellHead>
+                            <TableCellHead>Target</TableCellHead>
+                            <TableCellHead>Status</TableCellHead>
+                            <TableCellHead>Actions</TableCellHead>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {mappings.map(m => (
+                        {filtered.map(m => (
                             <TableRow key={m.id}>
-                                <TableCell>{m.name}</TableCell>
-                                <TableCell>{m.direction === 'omrs2dhis2' ? 'OpenMRS → DHIS2' : 'DHIS2 → OpenMRS'}</TableCell>
-                                <TableCell>{m.source_resource}</TableCell>
-                                <TableCell>{m.target_resource}</TableCell>
-                                <TableCell>{m.enabled ? 'Enabled' : 'Disabled'}</TableCell>
+                                <TableCell style={{ fontWeight: 500 }}>{m.name}</TableCell>
+                                <TableCell>
+                                    <span style={{ fontSize: 13 }}>
+                                        {m.direction === 'omrs2dhis2' ? 'OpenMRS → DHIS2' : 'DHIS2 → OpenMRS'}
+                                    </span>
+                                </TableCell>
+                                <TableCell style={{ fontSize: 13 }}>{m.source_resource}</TableCell>
+                                <TableCell style={{ fontSize: 13 }}>{m.target_resource}</TableCell>
+                                <TableCell>{statusBadge(m.enabled)}</TableCell>
                                 <TableCell>
                                     <ButtonStrip>
                                         <Button small onClick={() => openEdit(m)}>Edit</Button>
-                                        <Button small destructive onClick={() => remove(m.id)}>Delete</Button>
+                                        <Button
+                                            small
+                                            onClick={() => runSync(m.id)}
+                                            loading={syncingId === m.id}
+                                        >
+                                            {syncingId === m.id ? 'Syncing...' : 'Run Sync'}
+                                        </Button>
+                                        <Button small destructive onClick={() => setConfirmDelete(m)}>Delete</Button>
                                     </ButtonStrip>
                                 </TableCell>
                             </TableRow>
@@ -134,7 +207,22 @@ export default function Mappings() {
                     <ModalActions>
                         <ButtonStrip>
                             <Button onClick={() => setShowModal(false)}>Cancel</Button>
-                            <Button primary onClick={save}>{editing ? 'Update' : 'Create'}</Button>
+                            <Button primary onClick={save} loading={saving}>{editing ? 'Update' : 'Create'}</Button>
+                        </ButtonStrip>
+                    </ModalActions>
+                </Modal>
+            )}
+
+            {confirmDelete && (
+                <Modal onClose={() => setConfirmDelete(null)}>
+                    <ModalTitle>Delete Mapping</ModalTitle>
+                    <ModalContent>
+                        <p>Are you sure you want to delete mapping <strong>{confirmDelete.name}</strong>? This action cannot be undone.</p>
+                    </ModalContent>
+                    <ModalActions>
+                        <ButtonStrip>
+                            <Button onClick={() => setConfirmDelete(null)}>Cancel</Button>
+                            <Button destructive onClick={() => remove(confirmDelete.id)}>Delete</Button>
                         </ButtonStrip>
                     </ModalActions>
                 </Modal>

@@ -2,7 +2,7 @@
   "appType": "APP",
   "short_name": "interop-bridge",
   "name": "Interoperability Bridge",
-  "description": "DHIS2-OpenMRS data synchronization",
+  "description": "DHIS2-OpenMRS data synchronization bridge by vlolleh",
   "version": "1.0.0",
   "launch_path": "index.html",
   "default_locale": "en",
@@ -14,7 +14,10 @@
   "icons": {
     "48": "dhis2-app-icon.png"
   },
-  "manifest_generated_at": "Tue Jun 30 2026 11:48:47 GMT+0000 (Coordinated Universal Time)",
+  "developer": {
+    "name": "vlolleh"
+  },
+  "manifest_generated_at": "Wed Jul 01 2026 16:27:38 GMT+0000 (Coordinated Universal Time)",
   "display": "standalone",
   "theme_color": "#ffffff",
   "background_color": "#ffffff"

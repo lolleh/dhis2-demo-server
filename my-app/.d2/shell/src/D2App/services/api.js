@@ -1,4 +1,6 @@
-const BRIDGE_URL = process.env.REACT_APP_BRIDGE_URL || 'http://localhost:4000'
+const BRIDGE_PORT = '4000'
+const hostname = typeof window !== 'undefined' ? window.location.hostname : 'localhost'
+const BRIDGE_URL = process.env.REACT_APP_BRIDGE_URL || `http://${hostname}:${BRIDGE_PORT}`
 
 async function request(url, options = {}) {
     const res = await fetch(`${BRIDGE_URL}${url}`, {

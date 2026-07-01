@@ -1,0 +1,17 @@
+name = "interop-bridge"
+main = "src/index.js"
+compatibility_date = "2025-04-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "interop-bridge-db"
+database_id = ""
+migrations_dir = "migrations"
+
+[vars]
+DHIS2_URL = "http://localhost:8091"
+DHIS2_USERNAME = "admin"
+DHIS2_PASSWORD = "district"
+OPENMRS_URL = "http://openmrs:8080/openmrs"
+OPENMRS_USERNAME = "admin"
+OPENMRS_PASSWORD = "Admin123"

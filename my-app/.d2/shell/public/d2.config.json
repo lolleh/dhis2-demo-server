@@ -2,7 +2,10 @@
   "type": "app",
   "name": "interop-bridge",
   "title": "Interoperability Bridge",
-  "description": "DHIS2-OpenMRS data synchronization",
+  "description": "DHIS2-OpenMRS data synchronization bridge by vlolleh",
+  "author": {
+    "name": "vlolleh"
+  },
   "coreVersion": "2.44",
   "baseUrl": "http://localhost:8091",
   "version": "1.0.0",

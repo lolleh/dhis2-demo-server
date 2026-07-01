@@ -1,4 +1,4 @@
 {
-    "__MANIFEST_APP_TITLE_Application title": "My App",
-    "__MANIFEST_APP_DESCRIPTION_Application description": "A custom DHIS2 app"
+    "__MANIFEST_APP_TITLE_Application title": "Interoperability Bridge",
+    "__MANIFEST_APP_DESCRIPTION_Application description": "DHIS2-OpenMRS data synchronization bridge by vlolleh"
 }

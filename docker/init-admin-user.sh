@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-BASE_URL="http://web:8080"
+BASE_URL="${INTERNAL_DHIS2_URL:-http://web:8080}"
 USERNAME="vlolleh"
 PASSWORD="Vamba@2026"
 ADMIN_USER="admin"
