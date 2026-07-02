@@ -139,6 +139,10 @@ export default function Dashboard() {
                             <span style={{ marginLeft: 8, fontSize: 14 }}>OpenMRS</span>
                         </div>
                         <div>
+                            <StatusBadge ok={health?.commcare?.ok} />
+                            <span style={{ marginLeft: 8, fontSize: 14 }}>CommCare</span>
+                        </div>
+                        <div>
                             <StatusBadge ok label="Running" />
                             <span style={{ marginLeft: 8, fontSize: 14 }}>Bridge Service</span>
                         </div>

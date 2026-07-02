@@ -237,6 +237,42 @@ docker compose down -v
 docker compose up -d
 ```
 
+## CommCare Integration
+
+The bridge can pull aggregated data from [CommCare](https://www.commcarehq.org/) into DHIS2.
+
+### Setup
+
+1. **Get your CommCare API credentials** from CommCare HQ: Settings → API Keys
+
+2. **Add to `.env`**:
+   ```bash
+   COMMCARE_DOMAIN=yourproject.commcarehq.org
+   COMMCARE_API_KEY=your_api_key
+   COMMCARE_USERNAME=your_commcare_username
+   COMMCARE_APP_ID=your_app_id
+   ```
+
+3. **Restart the bridge**:
+   ```bash
+   docker compose up -d --build bridge
+   ```
+
+### How it works
+
+1. In the app at `http://localhost:3000`, create a mapping with direction **CommCare → DHIS2**
+2. Enter the **CommCare form XMLNS** (the unique identifier of the form to pull data from)
+3. Select the **target DHIS2 data set** and **health facility**
+4. Map CommCare **question IDs** (e.g. `p1_q1`, `weight_kg`) to DHIS2 **data elements**
+5. When sync runs, the bridge fetches all form submissions for the current period, aggregates numeric values, and posts them to DHIS2 as data values
+
+### Architecture
+
+```
+CommCare HQ  ──HTTP──>  Bridge API  ──HTTP──>  DHIS2
+(form submissions)      (aggregate + map)      (data value sets)
+```
+
 ## Stopping
 
 ```bash

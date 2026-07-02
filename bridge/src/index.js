@@ -2,6 +2,7 @@ const express = require('express')
 const cors = require('cors')
 const Dhis2Client = require('./clients/dhis2')
 const OpenmrsClient = require('./clients/openmrs')
+const CommcareClient = require('./clients/commcare')
 const store = require('./db/store')
 
 const app = express()
@@ -22,9 +23,17 @@ const openmrs = new OpenmrsClient(
     process.env.OPENMRS_PASSWORD || 'Admin123'
 )
 
-app.use('/api/status', require('./routes/status')(dhis2, openmrs))
+const commcare = new CommcareClient(
+    process.env.COMMCARE_DOMAIN || '',
+    process.env.COMMCARE_API_KEY || '',
+    process.env.COMMCARE_USERNAME || '',
+    process.env.COMMCARE_APP_ID || ''
+)
+
+app.use('/api/status', require('./routes/status')(dhis2, openmrs, commcare))
 app.use('/api/mappings', require('./routes/mappings')(store))
-app.use('/api/sync', require('./routes/sync')(store, dhis2, openmrs))
+app.use('/api/sync', require('./routes/sync')(store, dhis2, openmrs, commcare))
+app.use('/api/metadata', require('./routes/metadata')(dhis2))
 
 app.get('/', (req, res) => {
     res.json({
@@ -33,16 +42,21 @@ app.get('/', (req, res) => {
         author: 'vlolleh',
         description: 'DHIS2-OpenMRS interoperability bridge',
         endpoints: [
-            'GET  /api/status/health     - System health check',
-            'GET  /api/status/dhis2      - DHIS2 info',
-            'GET  /api/status/openmrs    - OpenMRS info',
-            'GET  /api/mappings          - List mappings',
-            'POST /api/mappings          - Create mapping',
-            'GET  /api/mappings/:id      - Get mapping',
-            'PUT  /api/mappings/:id      - Update mapping',
-            'DELETE /api/mappings/:id    - Delete mapping',
+            'GET  /api/status/health       - System health check',
+            'GET  /api/status/dhis2        - DHIS2 info',
+            'GET  /api/status/openmrs      - OpenMRS info',
+            'GET  /api/mappings            - List mappings',
+            'POST /api/mappings            - Create mapping',
+            'GET  /api/mappings/:id        - Get mapping',
+            'PUT  /api/mappings/:id        - Update mapping',
+            'DELETE /api/mappings/:id      - Delete mapping',
             'POST /api/sync/run/:mappingId - Execute sync',
-            'GET  /api/sync/logs         - Sync logs',
+            'GET  /api/sync/logs           - Sync logs',
+            'GET  /api/metadata/dataSets   - List data sets/forms',
+            'GET  /api/metadata/dataSets/:id - Data set details',
+            'GET  /api/metadata/orgUnits   - List org units',
+            'GET  /api/metadata/orgUnits/:id - Org unit details',
+            'GET  /api/metadata/dataElements - List data elements',
         ]
     })
 })

@@ -19,6 +19,7 @@ export const api = {
     health: () => request('/api/status/health'),
     dhis2Info: () => request('/api/status/dhis2'),
     openmrsInfo: () => request('/api/status/openmrs'),
+    commcareInfo: () => request('/api/status/commcare'),
 
     getMappings: () => request('/api/mappings'),
     getMapping: (id) => request(`/api/mappings/${id}`),
@@ -28,4 +29,10 @@ export const api = {
 
     runSync: (mappingId) => request(`/api/sync/run/${mappingId}`, { method: 'POST' }),
     getSyncLogs: (mappingId) => request(`/api/sync/logs${mappingId ? `?mappingId=${mappingId}` : ''}`),
+
+    getDataSets: () => request('/api/metadata/dataSets'),
+    getDataSet: (id) => request(`/api/metadata/dataSets/${id}`),
+    getOrgUnits: (params) => request(`/api/metadata/orgUnits?${new URLSearchParams(params || {}).toString()}`),
+    getOrgUnit: (id) => request(`/api/metadata/orgUnits/${id}`),
+    getDataElements: (params) => request(`/api/metadata/dataElements?${new URLSearchParams(params || {}).toString()}`),
 }

@@ -119,7 +119,12 @@ services:
       OPENMRS_URL: ${OPENMRS_URL:-http://openmrs:8080/openmrs}
       OPENMRS_USERNAME: ${OPENMRS_USERNAME:-admin}
       OPENMRS_PASSWORD: ${OPENMRS_PASSWORD:-Admin123}
+      COMMCARE_DOMAIN: ${COMMCARE_DOMAIN:-}
+      COMMCARE_API_KEY: ${COMMCARE_API_KEY:-}
+      COMMCARE_USERNAME: ${COMMCARE_USERNAME:-}
+      COMMCARE_APP_ID: ${COMMCARE_APP_ID:-}
     volumes:
+      - ./bridge/src:/app/src
       - bridge-data:/app/data
     depends_on:
       - web

@@ -88,6 +88,10 @@ curl http://localhost:4000/api/sync/logs
 | `OPENMRS_URL` | `http://openmrs:8080/openmrs` | OpenMRS internal URL |
 | `OPENMRS_USERNAME` | `admin` | OpenMRS API user |
 | `OPENMRS_PASSWORD` | `Admin123` | OpenMRS API password |
+| `COMMCARE_DOMAIN` | — | CommCare HQ domain (e.g. `myproject.commcarehq.org`) |
+| `COMMCARE_API_KEY` | — | CommCare API key |
+| `COMMCARE_USERNAME` | — | CommCare username |
+| `COMMCARE_APP_ID` | — | CommCare application ID (optional) |
 
 ## Development
 

@@ -39,13 +39,43 @@ class Dhis2Client {
         return this.get(`/dataElements?${params}`)
     }
 
+    async dataSets(query = {}) {
+        const params = new URLSearchParams({
+            fields: 'id,name,code,periodType,dataSetElements[dataElement[id,name,code,formName]]',
+            pageSize: '100',
+            ...query,
+        })
+        return this.get(`/dataSets?${params}`)
+    }
+
+    async dataSet(id) {
+        return this.get(`/dataSets/${id}?fields=id,name,code,periodType,dataSetElements[dataElement[id,name,code,formName,valueType,categoryCombo]]`)
+    }
+
     async organisationUnits(query = {}) {
-        const params = new URLSearchParams({ fields: 'id,name,code,level', pageSize: '500', ...query })
+        const params = new URLSearchParams({
+            fields: 'id,name,code,level,parent[id,name],path',
+            pageSize: '500',
+            ...query,
+        })
         return this.get(`/organisationUnits?${params}`)
     }
 
-    async dataValueSets(dataValues, dataSet) {
-        return this.post('/dataValueSets', { dataSet, dataValues, period: new Date().toISOString().slice(0, 7).replace('-', '') })
+    async orgUnitTree() {
+        return this.get('/organisationUnits?fields=id,name,code,level,children[id,name,level]&pageSize=1&filter=level:eq:1')
+    }
+
+    async organisationUnit(id) {
+        return this.get(`/organisationUnits/${id}?fields=id,name,code,level,children[id,name,level],parent[id,name]`)
+    }
+
+    async dataValueSets(dataValues, dataSet, orgUnit, period) {
+        return this.post('/dataValueSets', { dataSet, orgUnit, dataValues, period })
+    }
+
+    async getDataValueSets(query = {}) {
+        const params = new URLSearchParams({ ...query })
+        return this.get(`/dataValueSets?${params}`)
     }
 
     async trackedEntityInstances(query = {}) {
