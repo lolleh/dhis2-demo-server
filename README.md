@@ -112,6 +112,28 @@ cp .env.example .env
 | `DB_NAME` | `dhis` | Database name |
 | `DHIS2_DB_DUMP_URL` | Sierra Leone demo DB URL | URL to a `.sql.gz` database dump |
 
+## Connecting to a Remote OpenMRS Server
+
+The bridge can sync data with a remote OpenMRS instance (not just the local Docker one). Set these in `.env`:
+
+```bash
+OPENMRS_URL=https://your-remote-openmrs.org/openmrs
+OPENMRS_USERNAME=admin
+OPENMRS_PASSWORD=Admin123
+```
+
+These are read in `bridge/src/index.js` and passed to the OpenMRS client (`bridge/src/clients/openmrs.js`):
+
+```javascript
+const openmrs = new OpenmrsClient(
+    process.env.OPENMRS_URL || 'http://openmrs:8080/openmrs',
+    process.env.OPENMRS_USERNAME || 'admin',
+    process.env.OPENMRS_PASSWORD || 'Admin123'
+)
+```
+
+When a tracker sync runs (e.g. `omrs2dhis2`), the bridge fetches data directly from that remote server's REST API (`/ws/rest/v1/patient`, `/ws/rest/v1/encounter`, etc.) and posts the mapped data to DHIS2.
+
 ## Database Dumps
 
 You can use a different database dump via the `DHIS2_DB_DUMP_URL` env variable. Official demo databases are available at [databases.dhis2.org](https://databases.dhis2.org/).
