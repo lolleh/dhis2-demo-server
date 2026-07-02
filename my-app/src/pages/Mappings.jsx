@@ -56,6 +56,9 @@ export default function Mappings() {
     const [targetDataSetDetails, setTargetDataSetDetails] = useState(null)
     const [orgUnits, setOrgUnits] = useState([])
     const [orgUnitLevel, setOrgUnitLevel] = useState('2')
+    const [districts, setDistricts] = useState([])
+    const [selectedDistrict, setSelectedDistrict] = useState('')
+    const [childFacilities, setChildFacilities] = useState([])
 
     const showToast = useToast()
 
@@ -65,10 +68,12 @@ export default function Mappings() {
             api.getMappings(),
             api.getDataSets(),
             api.getOrgUnits({ filter: `level:eq:${orgUnitLevel}`, pageSize: '500' }),
-        ]).then(([m, ds, ou]) => {
+            api.getOrgUnits({ filter: 'level:eq:2', pageSize: '200' }),
+        ]).then(([m, ds, ou, d]) => {
             setMappings(m)
             setDataSets(ds.dataSets || [])
             setOrgUnits(ou.organisationUnits || [])
+            setDistricts(d.organisationUnits || [])
         }).catch(setError).finally(() => setLoading(false))
     }
 
@@ -80,7 +85,22 @@ export default function Mappings() {
                 .then(ou => setOrgUnits(ou.organisationUnits || []))
                 .catch(() => {})
         }
+        if (showModal) {
+            api.getOrgUnits({ filter: 'level:eq:2', pageSize: '200' })
+                .then(d => setDistricts(d.organisationUnits || []))
+                .catch(() => {})
+        }
     }, [orgUnitLevel, showModal])
+
+    useEffect(() => {
+        if (selectedDistrict) {
+            api.getOrgUnit(selectedDistrict)
+                .then(ou => setChildFacilities(ou.children || []))
+                .catch(() => setChildFacilities([]))
+        } else {
+            setChildFacilities([])
+        }
+    }, [selectedDistrict])
 
     useEffect(() => {
         if (form.source_data_set) {
@@ -109,6 +129,8 @@ export default function Mappings() {
     const openCreate = () => {
         setEditing(null)
         setForm(initialForm)
+        setSelectedDistrict('')
+        setChildFacilities([])
         setShowModal(true)
     }
 
@@ -130,6 +152,8 @@ export default function Mappings() {
             commcare_form_xmlns: m.commcare_form_xmlns || '',
             commcare_app_id: m.commcare_app_id || '',
         })
+        setSelectedDistrict('')
+        setChildFacilities([])
         setShowModal(true)
     }
 
@@ -416,14 +440,18 @@ export default function Mappings() {
                                     </div>
                                 )}
 
-                                <Field label="Org Unit Level">
+                                <Field label="District">
                                     <SingleSelect
-                                        selected={orgUnitLevel}
-                                        onChange={({ selected }) => setOrgUnitLevel(selected)}
+                                        selected={selectedDistrict || undefined}
+                                        onChange={({ selected }) => {
+                                            setSelectedDistrict(selected)
+                                            setForm(f => ({ ...f, source_org_unit: '' }))
+                                        }}
+                                        clearable
                                     >
-                                        <SingleSelectOption value="2" label="District" />
-                                        <SingleSelectOption value="3" label="Facility" />
-                                        <SingleSelectOption value="4" label="Sub-facility" />
+                                        {districts.map(d => (
+                                            <SingleSelectOption key={d.id} value={d.id} label={d.name} />
+                                        ))}
                                     </SingleSelect>
                                 </Field>
 
@@ -432,9 +460,10 @@ export default function Mappings() {
                                         selected={form.source_org_unit || undefined}
                                         onChange={({ selected }) => setForm(f => ({ ...f, source_org_unit: selected }))}
                                         clearable
+                                        disabled={!selectedDistrict}
                                     >
-                                        {orgUnitOptions.map(ou => (
-                                            <SingleSelectOption key={ou.value} value={ou.value} label={ou.label} />
+                                        {childFacilities.map(f => (
+                                            <SingleSelectOption key={f.id} value={f.id} label={f.name} />
                                         ))}
                                     </SingleSelect>
                                 </Field>
