@@ -34,15 +34,14 @@ class OpenmrsClient {
     del(path) { return this.request('DELETE', path) }
 
     async systemInfo() {
-        try {
-            const res = await fetch(`${this.baseUrl}/ws/rest/v1/appui/help/about`, {
-                headers: { Authorization: `Basic ${this.auth}` },
-            })
-            const data = await res.json()
-            return data
-        } catch {
-            return { status: 'unknown' }
+        const res = await fetch(`${this.baseUrl}/ws/rest/v1/appui/help/about`, {
+            headers: { Authorization: `Basic ${this.auth}` },
+            timeout: 5000,
+        })
+        if (!res.ok) {
+            throw new Error(`OpenMRS systemInfo: ${res.status}`)
         }
+        return await res.json()
     }
 
     async patients(query = {}) {

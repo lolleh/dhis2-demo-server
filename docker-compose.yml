@@ -73,6 +73,47 @@ services:
     ports:
       - "127.0.0.1:5435:5432"
 
+  openmrs-db:
+    image: mysql:5.7
+    command: "mysqld --character-set-server=utf8 --collation-server=utf8_general_ci"
+    environment:
+      MYSQL_DATABASE: ${OPENMRS_DB_NAME:-openmrs}
+      MYSQL_ROOT_PASSWORD: ${OPENMRS_DB_ROOT_PASSWORD:-Admin123}
+      MYSQL_USER: ${OPENMRS_DB_USER:-openmrs}
+      MYSQL_PASSWORD: ${OPENMRS_DB_PASSWORD:-Admin123}
+    volumes:
+      - openmrs-db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root -p$$MYSQL_ROOT_PASSWORD --silent"]
+      start_period: 30s
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  openmrs:
+    image: openmrs/openmrs-reference-application-distro:demo
+    depends_on:
+      openmrs-db:
+        condition: service_healthy
+    environment:
+      DB_DATABASE: ${OPENMRS_DB_NAME:-openmrs}
+      DB_HOST: openmrs-db
+      DB_USERNAME: ${OPENMRS_DB_USER:-openmrs}
+      DB_PASSWORD: ${OPENMRS_DB_PASSWORD:-Admin123}
+      DB_CREATE_TABLES: 'true'
+      DB_AUTO_UPDATE: 'true'
+      MODULE_WEB_ADMIN: 'true'
+    ports:
+      - "127.0.0.1:8081:8080" # OpenMRS UI: http://localhost:8081/openmrs
+    volumes:
+      - openmrs-data:/usr/local/tomcat/.OpenMRS
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/127.0.0.1/8080'"]
+      start_period: 300s
+      interval: 10s
+      timeout: 5s
+      retries: 30
+
   # Test synchronizing data and metadata between two DHIS2 instances
   # Run
   #   docker compose --profile sync up
@@ -127,7 +168,10 @@ services:
       - ./bridge/src:/app/src
       - bridge-data:/app/data
     depends_on:
-      - web
+      web:
+        condition: service_started
+      openmrs:
+        condition: service_healthy
 
   init-admin:
     image: curlimages/curl:latest
@@ -151,3 +195,5 @@ volumes:
   db-dump: {}
   pg-data:
   bridge-data:
+  openmrs-db-data:
+  openmrs-data:

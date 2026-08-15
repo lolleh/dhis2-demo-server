@@ -8,6 +8,14 @@ import { api } from '../services/api'
 
 const PAGE_SIZE = 10
 
+function formatDuration(startedAt, completedAt) {
+    if (!startedAt || !completedAt) return null
+    const diff = Math.round((new Date(completedAt + 'Z') - new Date(startedAt + 'Z')) / 1000)
+    if (diff < 60) return `${diff}s`
+    if (diff < 3600) return `${Math.floor(diff / 60)}m ${diff % 60}s`
+    return `${Math.floor(diff / 3600)}h ${Math.floor((diff % 3600) / 60)}m`
+}
+
 function timeAgo(dateStr) {
     if (!dateStr) return '-'
     const diff = Date.now() - new Date(dateStr + 'Z').getTime()
@@ -24,6 +32,13 @@ function formatDate(dateStr) {
     if (!dateStr) return '-'
     const d = new Date(dateStr + 'Z')
     return d.toLocaleString()
+}
+
+function statusBadge(status) {
+    const cls = status === 'success' ? 'badge badge-success'
+        : status === 'failed' ? 'badge badge-error'
+        : 'badge badge-warning'
+    return <span className={cls}>{status}</span>
 }
 
 export default function SyncLogs() {
@@ -64,32 +79,19 @@ export default function SyncLogs() {
     const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
     const paged = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE)
 
-    const statusBadge = (status) => (
-        <span style={{
-            display: 'inline-block', padding: '2px 8px', borderRadius: 10,
-            fontSize: 12, fontWeight: 600,
-            backgroundColor: status === 'success' ? '#e0f2f1' :
-                status === 'failed' ? '#fce4ec' : '#fff3e0',
-            color: status === 'success' ? '#009688' :
-                status === 'failed' ? '#f44336' : '#ff9800',
-        }}>
-            {status}
-        </span>
-    )
-
     if (loading) return <CircularLoader />
     if (error) return <NoticeBox title="Error" error>{error.message}</NoticeBox>
 
     return (
         <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+            <div className="page-header">
                 <h2>Sync Logs</h2>
                 <ButtonStrip>
                     <Button primary small onClick={load}>Refresh</Button>
                 </ButtonStrip>
             </div>
 
-            <div style={{ display: 'flex', gap: 12, marginBottom: 16, flexWrap: 'wrap', alignItems: 'end' }}>
+            <div className="filters-row">
                 <div style={{ minWidth: 200 }}>
                     <SingleSelect
                         placeholder="Filter by mapping"
@@ -124,24 +126,21 @@ export default function SyncLogs() {
             {filtered.length === 0 ? (
                 <NoticeBox title="No Logs">Run a sync to see logs here.</NoticeBox>
             ) : (
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCellHead>Mapping</TableCellHead>
-                            <TableCellHead>Status</TableCellHead>
-                            <TableCellHead>Processed</TableCellHead>
-                            <TableCellHead>Failed</TableCellHead>
-                            <TableCellHead>Started</TableCellHead>
-                            <TableCellHead>Duration</TableCellHead>
-                            <TableCellHead>Error</TableCellHead>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {paged.map(log => {
-                            const duration = log.started_at && log.completed_at
-                                ? timeAgo(log.started_at + 'Z') + ' (started)'
-                                : '-'
-                            return (
+                <div className="table-wrapper">
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCellHead>Mapping</TableCellHead>
+                                <TableCellHead>Status</TableCellHead>
+                                <TableCellHead>Processed</TableCellHead>
+                                <TableCellHead>Failed</TableCellHead>
+                                <TableCellHead>Started</TableCellHead>
+                                <TableCellHead>Duration</TableCellHead>
+                                <TableCellHead>Error</TableCellHead>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {paged.map(log => (
                                 <TableRow key={log.id}>
                                     <TableCell style={{ fontWeight: 500 }}>{mappingName(log.mapping_id)}</TableCell>
                                     <TableCell>{statusBadge(log.status)}</TableCell>
@@ -151,26 +150,25 @@ export default function SyncLogs() {
                                         {timeAgo(log.started_at)}
                                     </TableCell>
                                     <TableCell>
-                                        {log.started_at && log.completed_at
-                                            ? `${Math.round((new Date(log.completed_at + 'Z') - new Date(log.started_at + 'Z')) / 1000)}s`
-                                            : log.status === 'running' ? 'In progress...' : '-'}
+                                        {formatDuration(log.started_at, log.completed_at)
+                                            || (log.status === 'running' ? 'In progress...' : '-')}
                                     </TableCell>
-                                    <TableCell style={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                    <TableCell className="truncate">
                                         {log.error || '-'}
                                     </TableCell>
                                 </TableRow>
-                            )
-                        })}
-                    </TableBody>
-                </Table>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </div>
             )}
 
             {pageCount > 1 && (
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 8, marginTop: 16 }}>
+                <div className="pagination">
                     <Button small disabled={page === 0} onClick={() => setPage(p => p - 1)}>
                         Previous
                     </Button>
-                    <span style={{ fontSize: 13, color: '#666' }}>
+                    <span style={{ fontSize: 13, color: 'var(--colors-grey600)' }}>
                         Page {page + 1} of {pageCount} ({filtered.length} total)
                     </span>
                     <Button small disabled={page >= pageCount - 1} onClick={() => setPage(p => p + 1)}>
