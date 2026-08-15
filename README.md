@@ -187,6 +187,20 @@ Examples of alternative dumps:
 
 This project includes a DHIS2 custom app (`Interoperability Bridge`) in the `my-app/` directory.
 
+### Accessing the App
+
+The app is served at [http://localhost:3000](http://localhost:3000) and proxies API requests to the DHIS2 instance on port 8091 and the bridge on port 4000.
+
+1. Start the stack:
+   ```bash
+   docker compose up -d
+   ```
+2. Open [http://localhost:3000](http://localhost:3000) in your browser
+3. Log in using the **DHIS2 admin credentials** (`admin` / `district`) — the dev server proxies the login through DHIS2 on port 8091
+4. Use the **Dashboard**, **Mappings**, and **Sync Logs** tabs to configure and run data synchronization between DHIS2, OpenMRS, and CommCare
+
+> **Note:** The app requires the bridge service (`docker compose up -d bridge`). Check the Dashboard's status cards to confirm DHIS2, OpenMRS, and CommCare are reachable.
+
 ### Running the Dev Server
 
 #### Via Docker (recommended)
