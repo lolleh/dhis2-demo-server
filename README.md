@@ -93,6 +93,7 @@ docker compose up -d
 | Debugger | `localhost:8089` | JDWP debug port |
 | JMX | `localhost:9011` | JMX monitoring |
 | Database | `localhost:5435` | PostgreSQL 16 + PostGIS |
+| OpenMRS | `http://localhost:8081/openmrs` | OpenMRS reference application (demo distro) |
 
 ## Configuration
 
@@ -111,6 +112,44 @@ cp .env.example .env
 | `DB_PASSWORD` | `dhis` | Database password |
 | `DB_NAME` | `dhis` | Database name |
 | `DHIS2_DB_DUMP_URL` | Sierra Leone demo DB URL | URL to a `.sql.gz` database dump |
+
+## Local OpenMRS Server
+
+This project also starts a local [OpenMRS](https://openmrs.org/) reference application (demo distro) alongside DHIS2, so you can build and test DHIS2 ↔ OpenMRS integrations locally without any remote services.
+
+- **URL**: `http://localhost:8081/openmrs`
+- **Credentials**: username `admin`, password `Admin123`
+- **Image**: `openmrs/openmrs-reference-application-distro:demo`
+- **Database**: MySQL 5.7 (`openmrs-db` service, internal to the Docker network)
+
+The first start initializes the OpenMRS demo database, which takes a few minutes (see the `openmrs` container healthcheck). The bridge waits for OpenMRS to become healthy before it starts.
+
+### Accessing OpenMRS
+
+1. Make sure the stack is running:
+   ```bash
+   docker compose up -d
+   ```
+2. Open [http://localhost:8081/openmrs](http://localhost:8081/openmrs) in your browser
+3. Log in with username `admin` and password `Admin123`
+
+> The first page load may take a few minutes while the demo database initializes. You can check progress with `docker compose ps` (the `openmrs` service shows `healthy` when ready) or watch logs with `docker compose logs -f openmrs`.
+
+### Configuration
+
+The `openmrs` and `openmrs-db` services read from `.env`:
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `OPENMRS_URL` | `http://openmrs:8080/openmrs` | URL the bridge uses to reach OpenMRS |
+| `OPENMRS_USERNAME` | `admin` | OpenMRS API user (used by the bridge) |
+| `OPENMRS_PASSWORD` | `Admin123` | OpenMRS API password |
+| `OPENMRS_DB_NAME` | `openmrs` | MySQL database name |
+| `OPENMRS_DB_USER` | `openmrs` | MySQL username |
+| `OPENMRS_DB_PASSWORD` | `Admin123` | MySQL password |
+| `OPENMRS_DB_ROOT_PASSWORD` | `Admin123` | MySQL root password |
+
+> **Note:** The `openmrs-db` MySQL port is intentionally not exposed to the host — use `docker compose exec openmrs-db mysql -u openmrs -pAdmin123 openmrs` if you need direct database access.
 
 ## Connecting to a Remote OpenMRS Server
 
@@ -241,6 +280,7 @@ Common ports mapped by this project and the services they expose:
 | web | `8089` | `8081` | JDWP debugger |
 | web | `9011` | `9010` | JMX monitoring |
 | db | `5435` | `5432` | PostgreSQL |
+| openmrs | `8081` | `8080` | OpenMRS application |
 | web-sync | `8082` | `8080` | Sync instance |
 | web-sync | `8083` | `8081` | Sync debugger |
 | web-sync | `9012` | `9010` | Sync JMX |
