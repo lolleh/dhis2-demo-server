@@ -65,6 +65,8 @@ A local DHIS2 development environment using Docker Compose, with a pre-loaded Si
    - Log in with username `admin` and password `district`
    - The first start downloads a ~200MB database — this takes a few minutes
 
+> `docker compose up -d` starts **all** default services: DHIS2, its PostgreSQL database, OpenMRS + its MySQL database, the bridge, and the app dev server. Only the sync instances (`web-sync`/`db-sync`) are excluded — see [Sync Profile](#sync-profile).
+
 ### Linux / macOS
 
 ```bash
@@ -247,7 +249,7 @@ The output is written to `my-app/build/bundle/interop-bridge-1.0.0.zip` and copi
 
 ## Sync Profile
 
-Run two DHIS2 instances for testing data/metadata sync:
+The sync instances (`web-sync`/`db-sync`) are **not** started by `docker compose up -d` — they are excluded via the `sync` profile. Start them when you need a second DHIS2 instance for testing data/metadata sync:
 
 ```bash
 docker compose --profile sync up -d
