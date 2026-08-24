@@ -104,7 +104,7 @@ services:
       DB_AUTO_UPDATE: 'true'
       MODULE_WEB_ADMIN: 'true'
     ports:
-      - "127.0.0.1:8081:8080" # OpenMRS UI: http://localhost:8081/openmrs
+      - "127.0.0.1:8090:8080" # OpenMRS UI: http://localhost:8090/openmrs
     volumes:
       - openmrs-data:/usr/local/tomcat/.OpenMRS
     healthcheck:
