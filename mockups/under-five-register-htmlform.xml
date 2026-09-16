@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<htmlform formUuid="26f8e5c5-8787-43bd-af4c-21674f434d37" formName="Under Five (General) Register" formEncounterType="86ebf7c6-2d9d-4ee5-9064-59a81b550e37" formVersion="1.2">
+
+    <style type="text/css">
+        #who-when-where { margin-bottom: 8px; }
+        #who-when-where p { display: inline-block; padding-right: 24px; }
+        h4.section { margin: 14px 0 4px; border-bottom: 1px solid #ccc; color: #555; }
+        table.underfive { border-collapse: collapse; }
+        table.underfive tr { border-bottom: 1px solid #eee; }
+        table.underfive td { padding: 3px 10px 3px 0; }
+        td.label { font-weight: bold; white-space: nowrap; }
+        .field-error { color: #ff6666; font-size: 1.1em; display: block; }
+    </style>
+
+    <div id="who-when-where">
+        <p id="who">
+            <label>Provider:</label>
+            <span><encounterProvider default="currentUser" required="true" /></span>
+        </p>
+        <p id="where">
+            <label>Location:</label>
+            <span><encounterLocation /></span>
+        </p>
+        <p id="when">
+            <label>Date:</label>
+            <span><encounterDate id="encounterDate" default="now" /></span>
+        </p>
+    </div>
+
+    <h3>Under Five (General) Register</h3>
+
+      <h4 class="section">Register and visit details</h4>
+      <table class="underfive">
+          <tr>
+            <td class="label">Type of visit (new / follow-up):</td>
+            <td><obs conceptId="165281" style="dropdown" nullOption="[Choose]" /></td>
+          </tr>
+          <tr>
+            <td class="label">Service point (in facility / outreach):</td>
+            <td><obs conceptId="165277" style="dropdown" nullOption="[Choose]" /></td>
+          </tr>
+
+
+
+
+
+      </table>
+      <h4 class="section">Child identification and disability</h4>
+      <table class="underfive">
+
+
+
+          <tr>
+            <td class="label">Screened for disability:</td>
+            <td><obs conceptId="165372" style="radio" /></td>
+          </tr>
+          <tr>
+            <td class="label">Disability present:</td>
+            <td><obs conceptId="165373" style="dropdown" nullOption="[Choose]" /></td>
+          </tr>
+          <tr>
+            <td class="label">Disability type:</td>
+            <td><obs conceptId="165374" style="dropdown" nullOption="[Choose]" /></td>
+          </tr>
+      </table>
+      <h4 class="section">Anthropometry and vital signs</h4>
+      <table class="underfive">
+          <tr>
+            <td class="label">Temperature (C):</td>
+            <td><obs conceptId="5088" /></td>
+          </tr>
+          <tr>
+            <td class="label">Weight (kg):</td>
+            <td><obs conceptId="5089" /></td>
+          </tr>
+          <tr>
+            <td class="label">Height / Length (cm):</td>
+            <td><obs conceptId="165375" /></td>
+          </tr>
+          <tr>
+            <td class="label">MUAC (cm):</td>
+            <td><obs conceptId="165376" /></td>
+          </tr>
+          <tr>
+            <td class="label">WHZ score:</td>
+            <td><obs conceptId="165377" /></td>
+          </tr>
+          <tr>
+            <td class="label">WAZ score:</td>
+            <td><obs conceptId="165378" /></td>
+          </tr>
+          <tr>
+            <td class="label">Oxygen saturation (%):</td>
+            <td><obs conceptId="165392" /></td>
+          </tr>
+      </table>
+      <h4 class="section">Presenting complaint and feeding</h4>
+      <table class="underfive">
+          <tr>
+            <td class="label">Presenting complaint:</td>
+            <td><obs conceptId="165379" size="60" /></td>
+          </tr>
+          <tr>
+            <td class="label">Exclusive breastfeeding (child &lt; 6 months):</td>
+            <td><obs conceptId="165380" style="radio" /></td>
+          </tr>
+          <tr>
+            <td class="label">Continued breastfeeding (child 6-23 months):</td>
+            <td><obs conceptId="165381" style="radio" /></td>
+          </tr>
+      </table>
+      <h4 class="section">General danger signs</h4>
+      <table class="underfive">
+          <tr>
+            <td class="label">Unable to drink or breastfeed:</td>
+            <td><obs conceptId="165387" style="radio" /></td>
+          </tr>
+          <tr>
+            <td class="label">Vomiting everything:</td>
+            <td><obs conceptId="165388" style="radio" /></td>
+          </tr>
+          <tr>
+            <td class="label">History of convulsion:</td>
+            <td><obs conceptId="165389" style="radio" /></td>
+          </tr>
+          <tr>
+            <td class="label">Convulsing now:</td>
+            <td><obs conceptId="165390" style="radio" /></td>
+          </tr>
+          <tr>
+            <td class="label">Lethargic or unconscious:</td>
+            <td><obs conceptId="165391" style="radio" /></td>
+          </tr>
+          <tr>
+            <td class="label">Skin pinch:</td>
+            <td><obs conceptId="165393" style="dropdown" nullOption="[Choose]" /></td>
+          </tr>
+      </table>
+      <h4 class="section">Cough or difficult breathing</h4>
+      <table class="underfive">
+          <tr>
+            <td class="label">Cough or difficult breathing:</td>
+            <td><obs conceptId="165394" style="radio" /></td>
+          </tr>
+          <tr>
+            <td class="label">Duration of cough (days):</td>
+            <td><obs conceptId="165395" /></td>
+          </tr>
+          <tr>
+            <td class="label">Respiratory rate (per minute):</td>
+            <td><obs conceptId="165396" /></td>
+          </tr>
+          <tr>
+            <td class="label">Chest indrawing:</td>
+            <td><obs conceptId="165397" style="radio" /></td>
+          </tr>
+          <tr>
+            <td class="label">Stridor present:</td>
+            <td><obs conceptId="165398" style="radio" /></td>
+          </tr>
+      </table>
+      <h4 class="section">Diarrhoea</h4>
+      <table class="underfive">
+          <tr>
+            <td class="label">Diarrhoea:</td>
+            <td><obs conceptId="165399" style="radio" /></td>
+          </tr>
+          <tr>
+            <td class="label">Duration of diarrhoea (days):</td>
+            <td><obs conceptId="165400" /></td>
+          </tr>
+          <tr>
+            <td class="label">Blood in stool:</td>
+            <td><obs conceptId="165401" style="radio" /></td>
+          </tr>
+          <tr>
+            <td class="label">Sunken eyes:</td>
+            <td><obs conceptId="165402" style="radio" /></td>
+          </tr>
+          <tr>
+            <td class="label">Weak to drink:</td>
+            <td><obs conceptId="165403" style="radio" /></td>
+          </tr>
+          <tr>
+            <td class="label">Eager / thirsty drinking:</td>
+            <td><obs conceptId="165404" style="radio" /></td>
+          </tr>
+          <tr>
+            <td class="label">Skin pinch goes back slowly:</td>
+            <td><obs conceptId="165405" style="radio" /></td>
+          </tr>
+      </table>
+      <h4 class="section">Fever, measles and other signs</h4>
+      <table class="underfive">
+          <tr>
+            <td class="label">Fever:</td>
+            <td><obs conceptId="140238" style="radio" /></td>
+          </tr>
+          <tr>
+            <td class="label">Measles in last 3 months:</td>
+            <td><obs conceptId="165406" style="radio" /></td>
+          </tr>
+          <tr>
+            <td class="label">Generalized rash of measles:</td>
+            <td><obs conceptId="165407" style="radio" /></td>
+          </tr>
+          <tr>
+            <td class="label">Cough / runny nose / red eyes:</td>
+            <td><obs conceptId="165408" style="radio" /></td>
+          </tr>
+          <tr>
+            <td class="label">Mouth ulcer / pus draining eyes / corneal clouding:</td>
+            <td><obs conceptId="165409" style="radio" /></td>
+          </tr>
+          <tr>
+            <td class="label">Palmar pallor:</td>
+            <td><obs conceptId="165344" style="dropdown" nullOption="[Choose]" /></td>
+          </tr>
+      </table>
+      <h4 class="section">Ear problems</h4>
+      <table class="underfive">
+          <tr>
+            <td class="label">Ear problem:</td>
+            <td><obs conceptId="165410" style="radio" /></td>
+          </tr>
+          <tr>
+            <td class="label">Ear pain:</td>
+            <td><obs conceptId="165411" style="radio" /></td>
+          </tr>
+          <tr>
+            <td class="label">Ear discharge:</td>
+            <td><obs conceptId="165412" style="radio" /></td>
+          </tr>
+      </table>
+      <h4 class="section">Malnutrition and oedema</h4>
+      <table class="underfive">
+          <tr>
+            <td class="label">Visible severe wasting:</td>
+            <td><obs conceptId="165413" style="radio" /></td>
+          </tr>
+          <tr>
+            <td class="label">Pitting oedema of both feet:</td>
+            <td><obs conceptId="165414" style="radio" /></td>
+          </tr>
+          <tr>
+            <td class="label">MUAC category:</td>
+            <td><obs conceptId="165415" style="dropdown" nullOption="[Choose]" /></td>
+          </tr>
+          <tr>
+            <td class="label">WHZ category:</td>
+            <td><obs conceptId="165416" style="dropdown" nullOption="[Choose]" /></td>
+          </tr>
+          <tr>
+            <td class="label">Appetite test:</td>
+            <td><obs conceptId="165427" style="dropdown" nullOption="[Choose]" /></td>
+          </tr>
+      </table>
+      <h4 class="section">HIV and immunisation</h4>
+      <table class="underfive">
+          <tr>
+            <td class="label">HIV RDT result:</td>
+            <td><obs conceptId="165417" style="dropdown" nullOption="[Choose]" /></td>
+          </tr>
+          <tr>
+            <td class="label">HIV microscopy result:</td>
+            <td><obs conceptId="165418" style="dropdown" nullOption="[Choose]" /></td>
+          </tr>
+          <tr>
+            <td class="label">Immunisation up to date:</td>
+            <td><obs conceptId="165419" style="dropdown" nullOption="[Choose]" /></td>
+          </tr>
+          <tr>
+            <td class="label">Immunisation age band:</td>
+            <td><obs conceptId="165420" style="dropdown" nullOption="[Choose]" /></td>
+          </tr>
+          <tr>
+            <td class="label">Albendazole status:</td>
+            <td><obs conceptId="165421" style="dropdown" nullOption="[Choose]" /></td>
+          </tr>
+          <tr>
+            <td class="label">Vitamin A dose band:</td>
+            <td><obs conceptId="165422" style="dropdown" nullOption="[Choose]" /></td>
+          </tr>
+          <tr>
+            <td class="label">Vitamin A received within last 6 months:</td>
+            <td><obs conceptId="165423" style="radio" /></td>
+          </tr>
+          <tr>
+            <td class="label">Albendazole received within last 6 months:</td>
+            <td><obs conceptId="165424" style="radio" /></td>
+          </tr>
+          <tr>
+            <td class="label">Other problems:</td>
+            <td><obs conceptId="165425" size="60" /></td>
+          </tr>
+      </table>
+      <h4 class="section">Classification and treatment</h4>
+      <table class="underfive">
+          <tr>
+            <td class="label">Disease classification:</td>
+            <td><obs conceptId="165426" style="dropdown" nullOption="[Choose]" /></td>
+          </tr>
+          <tr>
+            <td class="label">Treatment given (medicine):</td>
+            <td><obs conceptId="165428" size="60" /></td>
+          </tr>
+          <tr>
+            <td class="label">Malaria treatment timing:</td>
+            <td><obs conceptId="165429" style="dropdown" nullOption="[Choose]" /></td>
+          </tr>
+          <tr>
+            <td class="label">Counsel mother on feeding:</td>
+            <td><obs conceptId="165430" style="radio" /></td>
+          </tr>
+          <tr>
+            <td class="label">Counsel mother on when to return:</td>
+            <td><obs conceptId="165431" style="radio" /></td>
+          </tr>
+      </table>
+      <h4 class="section">Referral and follow-up</h4>
+      <table class="underfive">
+          <tr>
+            <td class="label">Referred to health facility:</td>
+            <td><obs conceptId="165432" size="60" /></td>
+          </tr>
+          <tr>
+            <td class="label">Pre-referral treatment given:</td>
+            <td><obs conceptId="165433" style="radio" /></td>
+          </tr>
+          <tr>
+            <td class="label">Follow up date:</td>
+            <td><obs conceptId="165434" dateFormat="dd/mm/yyyy" /></td>
+          </tr>
+          <tr>
+            <td class="label">Outcome:</td>
+            <td><obs conceptId="165435" style="dropdown" nullOption="[Choose]" /></td>
+          </tr>
+      </table>
+      <h4 class="section">Supplies issued and remarks</h4>
+      <table class="underfive">
+          <tr>
+            <td class="label">Albendazole 400 mg (count):</td>
+            <td><obs conceptId="165436" /></td>
+          </tr>
+          <tr>
+            <td class="label">Amoxicillin 250 mg (count):</td>
+            <td><obs conceptId="165437" /></td>
+          </tr>
+          <tr>
+            <td class="label">ACT paediatric (2-11 months) (count):</td>
+            <td><obs conceptId="165438" /></td>
+          </tr>
+          <tr>
+            <td class="label">ACT (1-5 years) (count):</td>
+            <td><obs conceptId="165439" /></td>
+          </tr>
+          <tr>
+            <td class="label">ORS sachets (count):</td>
+            <td><obs conceptId="165440" /></td>
+          </tr>
+          <tr>
+            <td class="label">Paracetamol 100 mg (count):</td>
+            <td><obs conceptId="165441" /></td>
+          </tr>
+          <tr>
+            <td class="label">Zinc 20 mg (count):</td>
+            <td><obs conceptId="165442" /></td>
+          </tr>
+          <tr>
+            <td class="label">Rectal artesunate suppositories (count):</td>
+            <td><obs conceptId="165443" /></td>
+          </tr>
+          <tr>
+            <td class="label">Artesunate 60 mg/ml injection (count):</td>
+            <td><obs conceptId="165444" /></td>
+          </tr>
+          <tr>
+            <td class="label">Oxygen therapy:</td>
+            <td><obs conceptId="165445" style="radio" /></td>
+          </tr>
+          <tr>
+            <td class="label">Other drug (specify):</td>
+            <td><obs conceptId="165446" size="60" /></td>
+          </tr>
+          <tr>
+            <td class="label">Remarks:</td>
+            <td><obs conceptId="165447" size="60" /></td>
+          </tr>
+      </table>
+
+    <div id="buttons">
+        <submit submitClass="confirm right" submitCode="general.save"/>
+        <button type="button" class="cancel"><uimessage code="general.cancel"/></button>
+    </div>
+</htmlform>
+

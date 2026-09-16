@@ -27,11 +27,15 @@ module.exports = function (store) {
             source_org_unit, target_org_unit, period_type,
             field_mappings, schedule, element_mappings,
             commcare_form_xmlns, commcare_app_id,
+            search_term, identifier, patient_uuid, observation_uuid,
+            target_program, target_program_stage, source_db,
         } = req.body
 
         if (!name || !direction) {
             return res.status(400).json({ error: 'name and direction are required' })
         }
+
+        const type = mapping_type || 'tracker'
 
         if (direction === 'commcare2dhis2') {
             if (!target_data_set || !source_org_unit || !commcare_form_xmlns) {
@@ -40,7 +44,6 @@ module.exports = function (store) {
                 })
             }
         } else {
-            const type = mapping_type || 'tracker'
             if (type === 'aggregate') {
                 if (!source_data_set || !target_data_set || !source_org_unit) {
                     return res.status(400).json({
@@ -62,6 +65,8 @@ module.exports = function (store) {
             period_type: period_type || 'Monthly',
             field_mappings, schedule, element_mappings,
             commcare_form_xmlns, commcare_app_id,
+            search_term, identifier, patient_uuid, observation_uuid,
+            target_program, target_program_stage, source_db,
         })
         res.status(201).json(mapping)
     })

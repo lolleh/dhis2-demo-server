@@ -1,9 +1,27 @@
 const fetch = require('node-fetch')
 
 class Dhis2Client {
-    constructor(baseUrl, username, password) {
+    constructor(baseUrl, username, password, tlsOptions = {}) {
         this.baseUrl = baseUrl.replace(/\/+$/, '')
         this.auth = Buffer.from(`${username}:${password}`).toString('base64')
+        this.agent = this.buildTlsAgent(tlsOptions)
+    }
+
+    // Same TLS handling as the OpenMRS client: CA bundle, mTLS client cert, or
+    // an explicit self-signed opt-in. Only builds an agent for https URLs.
+    buildTlsAgent(opts = {}) {
+        if (!/^https:/i.test(this.baseUrl)) return null
+        const https = require('https')
+        const fs = require('fs')
+        const config = {}
+        if (opts.insecure) config.rejectUnauthorized = false
+        if (opts.caFile) config.ca = fs.readFileSync(opts.caFile)
+        if (opts.certFile && opts.keyFile) {
+            config.cert = fs.readFileSync(opts.certFile)
+            config.key = fs.readFileSync(opts.keyFile)
+        }
+        if (Object.keys(config).length === 0) return null
+        return new https.Agent(config)
     }
 
     async request(method, path, body) {
@@ -13,11 +31,13 @@ class Dhis2Client {
             'Content-Type': 'application/json',
             Accept: 'application/json',
         }
-        const res = await fetch(url, {
+        const fetchOptions = {
             method,
             headers,
             body: body ? JSON.stringify(body) : undefined,
-        })
+        }
+        if (this.agent) fetchOptions.agent = this.agent
+        const res = await fetch(url, fetchOptions)
         const data = await res.json()
         if (!res.ok) {
             throw new Error(`DHIS2 ${method} ${path}: ${res.status} ${data.message || JSON.stringify(data)}`)
@@ -37,6 +57,21 @@ class Dhis2Client {
     async dataElements(query = {}) {
         const params = new URLSearchParams({ fields: 'id,name,code', pageSize: '100', ...query })
         return this.get(`/dataElements?${params}`)
+    }
+
+    // Resolve a display value to a valid option code for a data element that
+    // uses an optionSet. Returns the input untouched if there is no option
+    // set or no matching option.
+    async optionCodeForValue(dataElementId, value) {
+        const de = await this.get(`/dataElements/${dataElementId}?fields=id,optionSet[id,name,options[code,name]]`)
+        if (!de || !de.optionSet) return value
+        const opts = de.optionSet.options || []
+        const val = String(value)
+        const byCode = opts.find(o => o.code && o.code.toLowerCase() === val.toLowerCase())
+        if (byCode) return byCode.code
+        const byName = opts.find(o => o.name && o.name.toLowerCase() === val.toLowerCase())
+        if (byName) return byName.code
+        return value
     }
 
     async dataSets(query = {}) {
@@ -90,6 +125,18 @@ class Dhis2Client {
 
     async postEvents(events) {
         return this.post('/events', { events })
+    }
+
+    postTrackerEvents(events) {
+        // DHIS2 2.40+ program events are imported via the Tracker API. Using
+        // async=false makes validation failures surface in the HTTP response
+        // instead of being sent to a background job that silently ignores rows.
+        return this.post('/tracker?importStrategy=CREATE_AND_UPDATE&async=false', { events })
+    }
+
+    async getTrackerEvents(query = {}) {
+        const params = new URLSearchParams({ fields: '*', pageSize: '50', ...query })
+        return this.get(`/tracker/events?${params}`)
     }
 
     async importMetadata(metadata) {

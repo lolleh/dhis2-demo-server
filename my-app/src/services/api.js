@@ -35,4 +35,8 @@ export const api = {
     getOrgUnits: (params) => request(`/api/metadata/orgUnits?${new URLSearchParams(params || {}).toString()}`),
     getOrgUnit: (id) => request(`/api/metadata/orgUnits/${id}`),
     getDataElements: (params) => request(`/api/metadata/dataElements?${new URLSearchParams(params || {}).toString()}`),
+
+    getOpenmrsForms: () => request('/api/metadata/openmrs/forms'),
+    getOpenmrsLocations: () => request('/api/metadata/openmrs/locations'),
+    getOpenmrsConcept: (uuid) => request(`/api/metadata/openmrs/concepts/${uuid}`),
 }

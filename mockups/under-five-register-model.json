@@ -1,0 +1,706 @@
+{
+  "register": "UNDER FIVE REGISTER FOR PHUs: AGE 2 MONTH-5 YEARS",
+  "source": "Sierra Leone IMCI Child Health Register (Google Sheet 16weLQ8mLfLGbEnXNnbTwuV525s9yFNIL)",
+  "encounter_type": {
+    "name": "Under Five Register",
+    "description": "IMCI under-five child visit (2 months - 5 years), Sierra Leone Register."
+  },
+  "form": {
+    "name": "Under Five (General) Register",
+    "version": "1.0",
+    "encounterType": "Under Five Register"
+  },
+  "concepts": {
+    "reused": {
+      "Yes": "1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "No": "1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "New": "1bfff36f-5ee3-4c22-ba99-5b981649ea30",
+      "Follow up": "ce10f985-03ae-44c7-a63e-ec5fa7aae3c5",
+      "In Facility": "cdc75415-678d-42ee-8d04-fe2404b6eb08",
+      "Outreach": "a27dc8c2-28df-4d93-abce-ec7e37a81907"
+    },
+    "answers": [
+      "Male",
+      "Female",
+      "N/A",
+      "Physical",
+      "Visual",
+      "Speech",
+      "Hearing",
+      "Learning",
+      "Multiple",
+      "Normal",
+      "Slowly",
+      "Very slowly",
+      "Not Done",
+      "Negative",
+      "Positive",
+      "Up to date",
+      "Not up to date",
+      "Unknown",
+      "Completed",
+      "Not started",
+      "6-11 months",
+      "12-23 months",
+      "24-59 months",
+      "< 6 months",
+      ">= 6 months",
+      "< 11.5 cm",
+      "11.5 - 12.5 cm",
+      ">= 12.5 cm",
+      "< -3",
+      "-3 to -2",
+      ">= -2",
+      "No pallor",
+      "Palmar pallor",
+      "Severe palmar pallor",
+      "Pneumonia / Fever",
+      "Watery diarrhoea / Dysentery",
+      "Malaria",
+      "Anaemia",
+      "Severe Malnutrition",
+      "No classification",
+      "Pass",
+      "Fail",
+      "Treated within 24 hrs of onset",
+      "Treated after 24 hrs of onset",
+      "Improved",
+      "The same",
+      "Worse",
+      "Died",
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"
+    ],
+    "questions": [
+      {
+        "name": "Age in months",
+        "datatype": "Numeric",
+        "answers": null
+      },
+      {
+        "name": "Sex (M/F)",
+        "datatype": "Coded",
+        "answers": [
+          "Male",
+          "Female"
+        ]
+      },
+      {
+        "name": "Chiefdom / Village",
+        "datatype": "Text",
+        "answers": null
+      },
+      {
+        "name": "Screened for disability",
+        "datatype": "Coded",
+        "answers": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "name": "Disability present",
+        "datatype": "Coded",
+        "answers": [
+          "Yes",
+          "No",
+          "N/A"
+        ]
+      },
+      {
+        "name": "Disability type",
+        "datatype": "Coded",
+        "answers": [
+          "Physical",
+          "Visual",
+          "Speech",
+          "Hearing",
+          "Learning",
+          "Multiple"
+        ]
+      },
+      {
+        "name": "Temperature (C)",
+        "datatype": "Numeric",
+        "answers": null
+      },
+      {
+        "name": "Weight (kg)",
+        "datatype": "Numeric",
+        "answers": null
+      },
+      {
+        "name": "Height / Length (cm)",
+        "datatype": "Numeric",
+        "answers": null
+      },
+      {
+        "name": "MUAC (cm)",
+        "datatype": "Numeric",
+        "answers": null
+      },
+      {
+        "name": "WHZ score",
+        "datatype": "Numeric",
+        "answers": null
+      },
+      {
+        "name": "WAZ score",
+        "datatype": "Numeric",
+        "answers": null
+      },
+      {
+        "name": "Presenting complaint",
+        "datatype": "Text",
+        "answers": null
+      },
+      {
+        "name": "Exclusive breastfeeding (child < 6 months)",
+        "datatype": "Coded",
+        "answers": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "name": "Continued breastfeeding (child 6-23 months)",
+        "datatype": "Coded",
+        "answers": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "name": "Type of visit (new / follow-up)",
+        "datatype": "Coded",
+        "answers": [
+          "New",
+          "Follow up"
+        ]
+      },
+      {
+        "name": "Service point (in facility / outreach)",
+        "datatype": "Coded",
+        "answers": [
+          "In Facility",
+          "Outreach"
+        ]
+      },
+      {
+        "name": "District",
+        "datatype": "Text",
+        "answers": null
+      },
+      {
+        "name": "Facility Name",
+        "datatype": "Text",
+        "answers": null
+      },
+      {
+        "name": "Facility Type",
+        "datatype": "Text",
+        "answers": null
+      },
+      {
+        "name": "Chiefdom / Zone",
+        "datatype": "Text",
+        "answers": null
+      },
+      {
+        "name": "Register Year",
+        "datatype": "Numeric",
+        "answers": null
+      },
+      {
+        "name": "Register Month",
+        "datatype": "Coded",
+        "answers": [
+          "January",
+          "February",
+          "March",
+          "April",
+          "May",
+          "June",
+          "July",
+          "August",
+          "September",
+          "October",
+          "November",
+          "December"
+        ]
+      },
+      {
+        "name": "Unable to drink or breastfeed",
+        "datatype": "Coded",
+        "answers": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "name": "Vomiting everything",
+        "datatype": "Coded",
+        "answers": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "name": "History of convulsion",
+        "datatype": "Coded",
+        "answers": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "name": "Convulsing now",
+        "datatype": "Coded",
+        "answers": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "name": "Lethargic or unconscious",
+        "datatype": "Coded",
+        "answers": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "name": "Oxygen saturation (%)",
+        "datatype": "Numeric",
+        "answers": null
+      },
+      {
+        "name": "Skin pinch",
+        "datatype": "Coded",
+        "answers": [
+          "Normal",
+          "Slowly",
+          "Very slowly"
+        ]
+      },
+      {
+        "name": "Cough or difficult breathing",
+        "datatype": "Coded",
+        "answers": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "name": "Duration of cough (days)",
+        "datatype": "Numeric",
+        "answers": null
+      },
+      {
+        "name": "Respiratory rate (per minute)",
+        "datatype": "Numeric",
+        "answers": null
+      },
+      {
+        "name": "Chest indrawing",
+        "datatype": "Coded",
+        "answers": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "name": "Stridor present",
+        "datatype": "Coded",
+        "answers": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "name": "Diarrhoea",
+        "datatype": "Coded",
+        "answers": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "name": "Duration of diarrhoea (days)",
+        "datatype": "Numeric",
+        "answers": null
+      },
+      {
+        "name": "Blood in stool",
+        "datatype": "Coded",
+        "answers": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "name": "Sunken eyes",
+        "datatype": "Coded",
+        "answers": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "name": "Weak to drink",
+        "datatype": "Coded",
+        "answers": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "name": "Eager / thirsty drinking",
+        "datatype": "Coded",
+        "answers": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "name": "Skin pinch goes back slowly",
+        "datatype": "Coded",
+        "answers": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "name": "Fever",
+        "datatype": "Coded",
+        "answers": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "name": "Measles in last 3 months",
+        "datatype": "Coded",
+        "answers": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "name": "Generalized rash of measles",
+        "datatype": "Coded",
+        "answers": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "name": "Cough / runny nose / red eyes",
+        "datatype": "Coded",
+        "answers": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "name": "Mouth ulcer / pus draining eyes / corneal clouding",
+        "datatype": "Coded",
+        "answers": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "name": "Palmar pallor",
+        "datatype": "Coded",
+        "answers": [
+          "No pallor",
+          "Palmar pallor",
+          "Severe palmar pallor"
+        ]
+      },
+      {
+        "name": "Ear problem",
+        "datatype": "Coded",
+        "answers": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "name": "Ear pain",
+        "datatype": "Coded",
+        "answers": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "name": "Ear discharge",
+        "datatype": "Coded",
+        "answers": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "name": "Visible severe wasting",
+        "datatype": "Coded",
+        "answers": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "name": "Pitting oedema of both feet",
+        "datatype": "Coded",
+        "answers": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "name": "MUAC category",
+        "datatype": "Coded",
+        "answers": [
+          "< 11.5 cm",
+          "11.5 - 12.5 cm",
+          ">= 12.5 cm"
+        ]
+      },
+      {
+        "name": "WHZ category",
+        "datatype": "Coded",
+        "answers": [
+          "< -3",
+          "-3 to -2",
+          ">= -2"
+        ]
+      },
+      {
+        "name": "HIV RDT result",
+        "datatype": "Coded",
+        "answers": [
+          "Not Done",
+          "Negative",
+          "Positive"
+        ]
+      },
+      {
+        "name": "HIV microscopy result",
+        "datatype": "Coded",
+        "answers": [
+          "Not Done",
+          "Negative",
+          "Positive"
+        ]
+      },
+      {
+        "name": "Immunisation up to date",
+        "datatype": "Coded",
+        "answers": [
+          "Up to date",
+          "Not up to date",
+          "Unknown"
+        ]
+      },
+      {
+        "name": "Immunisation age band",
+        "datatype": "Coded",
+        "answers": [
+          "< 6 months",
+          ">= 6 months"
+        ]
+      },
+      {
+        "name": "Albendazole status",
+        "datatype": "Coded",
+        "answers": [
+          "Completed",
+          "Not started",
+          "Unknown"
+        ]
+      },
+      {
+        "name": "Vitamin A dose band",
+        "datatype": "Coded",
+        "answers": [
+          "6-11 months",
+          "12-23 months",
+          "24-59 months"
+        ]
+      },
+      {
+        "name": "Vitamin A received within last 6 months",
+        "datatype": "Coded",
+        "answers": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "name": "Albendazole received within last 6 months",
+        "datatype": "Coded",
+        "answers": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "name": "Other problems",
+        "datatype": "Text",
+        "answers": null
+      },
+      {
+        "name": "Disease classification",
+        "datatype": "Coded",
+        "answers": [
+          "Pneumonia / Fever",
+          "Watery diarrhoea / Dysentery",
+          "Malaria",
+          "Anaemia",
+          "Severe Malnutrition",
+          "No classification"
+        ]
+      },
+      {
+        "name": "Appetite test",
+        "datatype": "Coded",
+        "answers": [
+          "Pass",
+          "Fail"
+        ]
+      },
+      {
+        "name": "Treatment given (medicine)",
+        "datatype": "Text",
+        "answers": null
+      },
+      {
+        "name": "Malaria treatment timing",
+        "datatype": "Coded",
+        "answers": [
+          "Treated within 24 hrs of onset",
+          "Treated after 24 hrs of onset"
+        ]
+      },
+      {
+        "name": "Counsel mother on feeding",
+        "datatype": "Coded",
+        "answers": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "name": "Counsel mother on when to return",
+        "datatype": "Coded",
+        "answers": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "name": "Referred to health facility",
+        "datatype": "Text",
+        "answers": null
+      },
+      {
+        "name": "Pre-referral treatment given",
+        "datatype": "Coded",
+        "answers": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "name": "Follow up date",
+        "datatype": "Date",
+        "answers": null
+      },
+      {
+        "name": "Outcome",
+        "datatype": "Coded",
+        "answers": [
+          "Improved",
+          "The same",
+          "Worse",
+          "Died"
+        ]
+      },
+      {
+        "name": "Albendazole 400 mg (count)",
+        "datatype": "Numeric",
+        "answers": null
+      },
+      {
+        "name": "Amoxicillin 250 mg (count)",
+        "datatype": "Numeric",
+        "answers": null
+      },
+      {
+        "name": "ACT paediatric (2-11 months) (count)",
+        "datatype": "Numeric",
+        "answers": null
+      },
+      {
+        "name": "ACT (1-5 years) (count)",
+        "datatype": "Numeric",
+        "answers": null
+      },
+      {
+        "name": "ORS sachets (count)",
+        "datatype": "Numeric",
+        "answers": null
+      },
+      {
+        "name": "Paracetamol 100 mg (count)",
+        "datatype": "Numeric",
+        "answers": null
+      },
+      {
+        "name": "Zinc 20 mg (count)",
+        "datatype": "Numeric",
+        "answers": null
+      },
+      {
+        "name": "Rectal artesunate suppositories (count)",
+        "datatype": "Numeric",
+        "answers": null
+      },
+      {
+        "name": "Artesunate 60 mg/ml injection (count)",
+        "datatype": "Numeric",
+        "answers": null
+      },
+      {
+        "name": "Oxygen therapy",
+        "datatype": "Coded",
+        "answers": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "name": "Other drug (specify)",
+        "datatype": "Text",
+        "answers": null
+      },
+      {
+        "name": "Remarks",
+        "datatype": "Text",
+        "answers": null
+      }
+    ]
+  }
+}

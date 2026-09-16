@@ -59,6 +59,8 @@ export default function Mappings() {
     const [districts, setDistricts] = useState([])
     const [selectedDistrict, setSelectedDistrict] = useState('')
     const [childFacilities, setChildFacilities] = useState([])
+    const [openmrsForms, setOpenmrsForms] = useState([])
+    const [openmrsLocations, setOpenmrsLocations] = useState([])
 
     const showToast = useToast()
 
@@ -78,6 +80,13 @@ export default function Mappings() {
     }
 
     useEffect(() => { load() }, [])
+
+    useEffect(() => {
+        if (showModal) {
+            api.getOpenmrsForms().then(r => setOpenmrsForms(r.results || [])).catch(() => setOpenmrsForms([]))
+            api.getOpenmrsLocations().then(r => setOpenmrsLocations(r.results || [])).catch(() => setOpenmrsLocations([]))
+        }
+    }, [showModal])
 
     useEffect(() => {
         if (orgUnitLevel && showModal) {
@@ -177,6 +186,15 @@ export default function Mappings() {
                 payload.source_resource = null
                 payload.target_resource = null
                 payload.source_data_set = null
+                payload.mapping_type = 'aggregate'
+            } else if (form.direction === 'omrs2dhis2' && form.mapping_type === 'aggregate') {
+                payload.source_data_set = form.source_data_set
+                payload.target_data_set = form.target_data_set
+                payload.source_org_unit = form.source_org_unit
+                payload.target_org_unit = form.target_org_unit || null
+                payload.period_type = form.period_type
+                payload.source_resource = null
+                payload.target_resource = null
                 payload.mapping_type = 'aggregate'
             } else if (form.mapping_type === 'aggregate') {
                 payload.source_data_set = form.source_data_set
@@ -290,6 +308,18 @@ export default function Mappings() {
         label: ds.name,
     }))
 
+    const dataSetNameMap = Object.fromEntries(dataSets.map(ds => [ds.id, ds.name]))
+
+    const openmrsFormOptions = openmrsForms.map(f => ({
+        value: f.uuid,
+        label: f.name,
+    }))
+
+    const openmrsLocationOptions = openmrsLocations.map(l => ({
+        value: l.uuid,
+        label: l.name,
+    }))
+
     if (loading) return <CircularLoader />
     if (error) return <NoticeBox title="Error" error>{error.message}</NoticeBox>
 
@@ -341,12 +371,14 @@ export default function Mappings() {
                                     </TableCell>
                                     <TableCell className="direction-label">
                                         {m.mapping_type === 'aggregate'
-                                            ? (m.source_data_set || '-')
+                                            ? (m.direction === 'omrs2dhis2'
+                                                ? (openmrsFormOptions.find(f => f.value === m.source_data_set)?.label || m.source_data_set || '-')
+                                                : (dataSetNameMap[m.source_data_set] || m.source_data_set || '-'))
                                             : (m.source_resource || '-')}
                                     </TableCell>
                                     <TableCell className="direction-label">
                                         {m.mapping_type === 'aggregate'
-                                            ? (m.target_data_set || '-')
+                                            ? (dataSetNameMap[m.target_data_set] || m.target_data_set || '-')
                                             : (m.target_resource || '-')}
                                     </TableCell>
                                     <TableCell>{statusBadge(m.enabled)}</TableCell>
@@ -522,6 +554,167 @@ export default function Mappings() {
                                                                         {targetElements.map(el => (
                                                                             <SingleSelectOption key={el.id} value={el.id} label={`${el.name} (${el.code || el.id})`} />
                                                                         ))}
+                                                                    </SingleSelect>
+                                                                </TableCell>
+                                                                <TableCell>
+                                                                    <Button small destructive onClick={() => removeElementMapping(i)}>Remove</Button>
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        ))}
+                                                    </TableBody>
+                                                </Table>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </>
+                        ) : form.direction === 'omrs2dhis2' && form.mapping_type === 'aggregate' ? (
+                            <>
+                                <Field label="OpenMRS Form">
+                                    <SingleSelect
+                                        selected={form.source_data_set || undefined}
+                                        onChange={({ selected }) => setForm(f => ({ ...f, source_data_set: selected, element_mappings: [] }))}
+                                        clearable
+                                    >
+                                        {openmrsFormOptions.map(opt => (
+                                            <SingleSelectOption key={opt.value} value={opt.value} label={opt.label} />
+                                        ))}
+                                    </SingleSelect>
+                                </Field>
+
+                                <Field label="OpenMRS Location">
+                                    <SingleSelect
+                                        selected={form.source_org_unit || undefined}
+                                        onChange={({ selected }) => setForm(f => ({ ...f, source_org_unit: selected }))}
+                                        clearable
+                                    >
+                                        {openmrsLocationOptions.map(opt => (
+                                            <SingleSelectOption key={opt.value} value={opt.value} label={opt.label} />
+                                        ))}
+                                    </SingleSelect>
+                                </Field>
+
+                                {dataSetOptions.length > 0 && (
+                                    <Field label="Target DHIS2 Data Set">
+                                        <SingleSelect
+                                            selected={form.target_data_set || undefined}
+                                            onChange={({ selected }) => setForm(f => ({ ...f, target_data_set: selected, element_mappings: [] }))}
+                                            clearable
+                                        >
+                                            {dataSetOptions.map(ds => (
+                                                <SingleSelectOption key={ds.value} value={ds.value} label={ds.label} />
+                                            ))}
+                                        </SingleSelect>
+                                    </Field>
+                                )}
+
+                                {targetDataSetDetails && (
+                                    <div style={{ marginBottom: 8 }}>
+                                        <Tag>{targetElements.length} data elements</Tag>
+                                    </div>
+                                )}
+
+                                <Field label="District">
+                                    <SingleSelect
+                                        selected={selectedDistrict || undefined}
+                                        onChange={({ selected }) => {
+                                            setSelectedDistrict(selected)
+                                            setForm(f => ({ ...f, target_org_unit: '' }))
+                                        }}
+                                        clearable
+                                    >
+                                        {districts.map(d => (
+                                            <SingleSelectOption key={d.id} value={d.id} label={d.name} />
+                                        ))}
+                                    </SingleSelect>
+                                </Field>
+
+                                <Field label="Target DHIS2 Facility">
+                                    <SingleSelect
+                                        selected={form.target_org_unit || undefined}
+                                        onChange={({ selected }) => setForm(f => ({ ...f, target_org_unit: selected }))}
+                                        clearable
+                                        disabled={!selectedDistrict}
+                                    >
+                                        {childFacilities.map(f => (
+                                            <SingleSelectOption key={f.id} value={f.id} label={f.name} />
+                                        ))}
+                                    </SingleSelect>
+                                </Field>
+
+                                <Field label="Period Type">
+                                    <SingleSelect
+                                        selected={form.period_type}
+                                        onChange={({ selected }) => setForm(f => ({ ...f, period_type: selected }))}
+                                    >
+                                        <SingleSelectOption value="Monthly" label="Monthly" />
+                                        <SingleSelectOption value="Quarterly" label="Quarterly" />
+                                        <SingleSelectOption value="Yearly" label="Yearly" />
+                                    </SingleSelect>
+                                </Field>
+
+                                {targetElements.length > 0 && (
+                                    <div style={{ marginTop: 16 }}>
+                                        <div className="page-header">
+                                            <h3>Concept → Data Element Mappings</h3>
+                                            <ButtonStrip>
+                                                <Button small onClick={() => {
+                                                    setForm(f => ({
+                                                        ...f,
+                                                        element_mappings: [
+                                                            ...f.element_mappings,
+                                                            { source_element: '', target_element: '', transformation: 'count' },
+                                                        ],
+                                                    }))
+                                                }}>
+                                                    Add mapping
+                                                </Button>
+                                            </ButtonStrip>
+                                        </div>
+
+                                        {form.element_mappings.length === 0 ? (
+                                            <NoticeBox title="No mappings">
+                                                Add mappings to define how OpenMRS concepts map to DHIS2 data elements. Enter the concept UUID from OpenMRS and select the target data element.
+                                            </NoticeBox>
+                                        ) : (
+                                            <div className="table-wrapper">
+                                                <Table>
+                                                    <TableHead>
+                                                        <TableRow>
+                                                            <TableCellHead>OpenMRS Concept UUID</TableCellHead>
+                                                            <TableCellHead>DHIS2 Data Element</TableCellHead>
+                                                            <TableCellHead>Transform</TableCellHead>
+                                                            <TableCellHead />
+                                                        </TableRow>
+                                                    </TableHead>
+                                                    <TableBody>
+                                                        {form.element_mappings.map((em, i) => (
+                                                            <TableRow key={i}>
+                                                                <TableCell>
+                                                                    <Input
+                                                                        value={em.source_element}
+                                                                        onChange={({ value }) => updateElementMapping(i, 'source_element', value)}
+                                                                        placeholder="e.g. 41851ab2-7dc9-..."
+                                                                    />
+                                                                </TableCell>
+                                                                <TableCell>
+                                                                    <SingleSelect
+                                                                        selected={em.target_element || undefined}
+                                                                        onChange={({ selected }) => updateElementMapping(i, 'target_element', selected)}
+                                                                    >
+                                                                        {targetElements.map(el => (
+                                                                            <SingleSelectOption key={el.id} value={el.id} label={`${el.name} (${el.code || el.id})`} />
+                                                                        ))}
+                                                                    </SingleSelect>
+                                                                </TableCell>
+                                                                <TableCell>
+                                                                    <SingleSelect
+                                                                        selected={em.transformation || 'count'}
+                                                                        onChange={({ selected }) => updateElementMapping(i, 'transformation', selected)}
+                                                                    >
+                                                                        <SingleSelectOption value="count" label="Count" />
+                                                                        <SingleSelectOption value="sum" label="Sum" />
+                                                                        <SingleSelectOption value="avg" label="Average" />
                                                                     </SingleSelect>
                                                                 </TableCell>
                                                                 <TableCell>

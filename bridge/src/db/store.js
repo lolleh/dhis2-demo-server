@@ -17,8 +17,6 @@ function getDb() {
 }
 
 function migrate() {
-    const userVersion = db.pragma('user_version', { simple: true })
-
     db.exec(`
         CREATE TABLE IF NOT EXISTS mappings (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -51,8 +49,7 @@ function migrate() {
         );
     `)
 
-    if (userVersion < 1) {
-        try {
+    try {
             db.exec(`ALTER TABLE mappings ADD COLUMN mapping_type TEXT NOT NULL DEFAULT 'tracker'`)
         } catch (e) {
             // column may already exist
@@ -91,9 +88,29 @@ function migrate() {
         try {
             db.exec(`ALTER TABLE mappings ADD COLUMN commcare_app_id TEXT`)
         } catch (e) {}
+        try {
+            db.exec(`ALTER TABLE mappings ADD COLUMN search_term TEXT`)
+        } catch (e) {}
+        try {
+            db.exec(`ALTER TABLE mappings ADD COLUMN identifier TEXT`)
+        } catch (e) {}
+        try {
+            db.exec(`ALTER TABLE mappings ADD COLUMN patient_uuid TEXT`)
+        } catch (e) {}
+        try {
+            db.exec(`ALTER TABLE mappings ADD COLUMN observation_uuid TEXT`)
+        } catch (e) {}
+        try {
+            db.exec(`ALTER TABLE mappings ADD COLUMN target_program TEXT`)
+        } catch (e) {}
+        try {
+            db.exec(`ALTER TABLE mappings ADD COLUMN target_program_stage TEXT`)
+        } catch (e) {}
+        try {
+            db.exec(`ALTER TABLE mappings ADD COLUMN source_db TEXT`)
+        } catch (e) {}
 
         db.pragma('user_version = 1')
-    }
 }
 
 const store = {
@@ -114,14 +131,18 @@ const store = {
                 source_data_set, target_data_set,
                 source_org_unit, target_org_unit, period_type,
                 field_mappings, schedule,
-                commcare_form_xmlns, commcare_app_id
+                commcare_form_xmlns, commcare_app_id,
+                search_term, identifier, patient_uuid, observation_uuid,
+                target_program, target_program_stage, source_db
             ) VALUES (
                 @name, @mapping_type, @direction,
                 @source_resource, @target_resource,
                 @source_data_set, @target_data_set,
                 @source_org_unit, @target_org_unit, @period_type,
                 @field_mappings, @schedule,
-                @commcare_form_xmlns, @commcare_app_id
+                @commcare_form_xmlns, @commcare_app_id,
+                @search_term, @identifier, @patient_uuid, @observation_uuid,
+                @target_program, @target_program_stage, @source_db
             )
         `)
         const result = stmt.run({
@@ -139,6 +160,13 @@ const store = {
             schedule: data.schedule || null,
             commcare_form_xmlns: data.commcare_form_xmlns || null,
             commcare_app_id: data.commcare_app_id || null,
+            search_term: data.search_term || null,
+            identifier: data.identifier || null,
+            patient_uuid: data.patient_uuid || null,
+            observation_uuid: data.observation_uuid || null,
+            target_program: data.target_program || null,
+            target_program_stage: data.target_program_stage || null,
+            source_db: data.source_db || null,
         })
         const mapping = store.getMapping(result.lastInsertRowid)
         if (data.element_mappings) {
@@ -160,6 +188,10 @@ const store = {
                 schedule = @schedule, enabled = @enabled,
                 commcare_form_xmlns = @commcare_form_xmlns,
                 commcare_app_id = @commcare_app_id,
+                search_term = @search_term, identifier = @identifier,
+                patient_uuid = @patient_uuid, observation_uuid = @observation_uuid,
+                target_program = @target_program, target_program_stage = @target_program_stage,
+                source_db = @source_db,
                 updated_at = datetime('now')
             WHERE id = @id
         `)
@@ -180,6 +212,13 @@ const store = {
             enabled: data.enabled ?? existing.enabled,
             commcare_form_xmlns: data.commcare_form_xmlns ?? existing.commcare_form_xmlns,
             commcare_app_id: data.commcare_app_id ?? existing.commcare_app_id,
+            search_term: data.search_term ?? existing.search_term,
+            identifier: data.identifier ?? existing.identifier,
+            patient_uuid: data.patient_uuid ?? existing.patient_uuid,
+            observation_uuid: data.observation_uuid ?? existing.observation_uuid,
+            target_program: data.target_program ?? existing.target_program,
+            target_program_stage: data.target_program_stage ?? existing.target_program_stage,
+            source_db: data.source_db ?? existing.source_db,
         })
         if (data.element_mappings) {
             store.setElementMappings(id, data.element_mappings)
@@ -189,6 +228,7 @@ const store = {
 
     deleteMapping(id) {
         getDb().prepare('DELETE FROM data_element_mappings WHERE mapping_id = ?').run(id)
+        getDb().prepare('DELETE FROM sync_logs WHERE mapping_id = ?').run(id)
         getDb().prepare('DELETE FROM mappings WHERE id = ?').run(id)
     },
 
