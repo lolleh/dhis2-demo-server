@@ -9,6 +9,9 @@
 #   2. Two-step login (Health Facility -> Unit/Department): the referenceapplication
 #      module serves login.gsp from its omod jar, the extracted webapp view and the
 #      lib-cache. All are replaced here too.
+#   3. OpenMRS Initializer module: deployed into the app-data modules dir before
+#      OpenMRS boots so the PIH Sierra Leone config mounted at
+#      .OpenMRS/configuration is processed on startup.
 # - Watches every deployed copy and re-applies the custom ones if any OpenMRS
 #   startup step re-extracts or overwrites them (module views are extracted lazily
 #   late in startup).
@@ -25,8 +28,30 @@ INNER_MEMBER=web/module/pages/clinicianfacing/patient.gsp
 CUSTOM_LOGIN_GSP=/opt/openmrs-custom/openmrs-web/login.gsp
 WEBAPP_LOGIN_GSP=/usr/local/tomcat/webapps/openmrs/WEB-INF/view/module/referenceapplication/pages/login.gsp
 
+# --- OpenMRS Initializer module ------------------------------------------------
+# Vendored omod is mounted read-only at /opt/openmrs-custom/initializer. OpenMRS
+# auto-installs any .omod found in the app-data modules dir at boot, so copy it
+# there (persistently, via the openmrs-data volume) before Tomcat starts.
+INITIALIZER_SRC=/opt/openmrs-custom/initializer
+APPDATA_MODULES_DIR=/usr/local/tomcat/.OpenMRS/modules
+INITIALIZER_INSTALLED_MD5="" # md5 of the omod currently in the app-data modules dir
+
+deploy_initializer_module() {
+  [ -d "$INITIALIZER_SRC" ] || return 0
+  for src in "$INITIALIZER_SRC"/*.omod; do
+    [ -f "$src" ] || continue
+    mkdir -p "$APPDATA_MODULES_DIR"
+    if [ ! -f "$APPDATA_MODULES_DIR/$(basename "$src")" ]; then
+      cp -f "$src" "$APPDATA_MODULES_DIR/"
+      echo "openmrs-custom: initializer omod -> app-data modules dir"
+    fi
+  done
+  INITIALIZER_INSTALLED_MD5=$(md5sum "$APPDATA_MODULES_DIR"/initializer-*.omod 2>/dev/null | awk '{print $1}' || true)
+}
+
 # Start the stock startup script in the background (it runs Tomcat in the
 # foreground internally, then `wait`s — running it in bg lets us also monitor).
+deploy_initializer_module
 /usr/local/tomcat/startup.sh &
 STOCK_PID=$!
 
@@ -87,6 +112,7 @@ done
 # the deployed copies, restore the custom ones (checked every 20s).
 while [ "$INSTALLED" = 1 ] && kill -0 "$STOCK_PID" 2>/dev/null; do
   sleep 20
+  deploy_initializer_module
   NEEDS_FIX=""
   if [ -f "$WEBAPP_GSP" ]; then
     M=$(md5sum "$WEBAPP_GSP" 2>/dev/null | awk '{print $1}')

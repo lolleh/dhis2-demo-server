@@ -73,6 +73,9 @@ services:
     ports:
       - "127.0.0.1:5435:5432"
 
+  # OpenMRS 2.8.9 + full PIH EMR module set + Initializer 2.12 + O3 SPA
+  # (partnersinhealth/pihsl-emr). Uses the OMRS_* env convention (see
+  # /openmrs/startup-init.sh inside the image).
   openmrs-db:
     image: mysql:5.7
     command: "mysqld --character-set-server=utf8 --collation-server=utf8_general_ci"
@@ -84,7 +87,7 @@ services:
     ports:
       - "127.0.0.1:3307:3306"
     volumes:
-      - openmrs-db-data:/var/lib/mysql
+      - openmrs-pihsl-db-data:/var/lib/mysql
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root -p$$MYSQL_ROOT_PASSWORD --silent"]
       start_period: 30s
@@ -93,40 +96,50 @@ services:
       retries: 20
 
   openmrs:
-    image: openmrs/openmrs-reference-application-distro:demo
-    command: ["/usr/local/tomcat/openmrs-custom/entrypoint-custom.sh"]
+    image: ${OPENMRS_IMAGE:-partnersinhealth/pihsl-emr:latest}
     depends_on:
       openmrs-db:
         condition: service_healthy
     environment:
-      DB_DATABASE: ${OPENMRS_DB_NAME:-openmrs}
-      DB_HOST: openmrs-db
-      DB_USERNAME: ${OPENMRS_DB_USER:-openmrs}
-      DB_PASSWORD: ${OPENMRS_DB_PASSWORD:-Admin123}
-      DB_CREATE_TABLES: 'true'
-      DB_AUTO_UPDATE: 'true'
-      MODULE_WEB_ADMIN: 'true'
+      OMRS_DB: mysql
+      OMRS_DB_HOSTNAME: openmrs-db
+      OMRS_DB_PORT: '3306'
+      OMRS_DB_NAME: ${OPENMRS_DB_NAME:-openmrs}
+      OMRS_DB_USERNAME: ${OPENMRS_DB_USER:-openmrs}
+      OMRS_DB_PASSWORD: ${OPENMRS_DB_PASSWORD:-Admin123}
+      OMRS_ADMIN_USER_PASSWORD: ${OPENMRS_PASSWORD:-Admin123}
+      OMRS_ADMIN_PASSWORD_LOCKED: 'false'
+      OMRS_AUTO_UPDATE_DATABASE: 'true'
+      OMRS_CREATE_TABLES: 'true'
+      OMRS_MODULE_WEB_ADMIN: 'true'
+      OMRS_SEARCH: lucene
+      # Lean default heap in the image (-XX:NewSize=128m) is too small for the
+      # full PIH SL module set + Initializer config run.
+      OMRS_JAVA_MEMORY_OPTS: "-Xms512m -Xmx4g -XX:NewSize=128m"
+      # PIH SL config profile loaded on startup (same default the image ships).
+      # Active site config lives in pih/config/pih-config-sierraLeone-*.json
+      # (one active at a time). Switch with:
+      #   OPENMRS_PIH_CONFIG=sierraLeone,sierraLeone-falaba docker compose up -d openmrs
+      OMRS_EXTRA_pih_config: ${OPENMRS_PIH_CONFIG:-sierraLeone,sierraLeone-mongo}
+      # Let Initializer load the baked-in PIH SL config on startup. 'continue_on_error'
+      # keeps the server bootable if an individual domain fails to load.
+      OMRS_EXTRA_initializer_startup_load: continue_on_error
     ports:
-      - "127.0.0.1:8090:8080" # OpenMRS UI: http://localhost:8090/openmrs
+      - "127.0.0.1:8090:8080" # OpenMRS UI: http://localhost:8090/openmrs (O3 SPA)
     volumes:
-      - openmrs-data:/usr/local/tomcat/.OpenMRS
-      # Custom clinician-facing patient dashboard (Above Five Treatment Register link).
-      # The patched WAR replaces the stock artifact Tomcat extracts at boot, so the
-      # coreapps module bundle inside already carries the custom patient.gsp.
-      - ./openmrs-forms/above-five-treatment-register/openmrs-patched.war:/usr/local/tomcat/webapps/openmrs.war:ro
-      # Mounted read-only to a neutral path; entrypoint-custom.sh keeps the extracted
-      # copies in sync (safety net) without breaking WAR extraction.
-      - ./openmrs-forms/above-five-treatment-register/patient.gsp:/opt/openmrs-custom/openmrs-web/patient.gsp:ro
-      - ./openmrs-forms/above-five-treatment-register/coreapps-1.34.0-patched.omod:/opt/openmrs-custom/coreapps-patched.omod:ro
-      - ./openmrs-forms/login/login.gsp:/opt/openmrs-custom/openmrs-web/login.gsp:ro
-      - ./openmrs-forms/login/referenceapplication-2.12.0-patched.omod:/opt/openmrs-custom/referenceapplication-patched.omod:ro
-      - ./openmrs-forms/above-five-treatment-register/entrypoint-custom.sh:/usr/local/tomcat/openmrs-custom/entrypoint-custom.sh:ro
+      # App data (modules, config checksums, Lucene index, complex obs, runtime
+      # properties). Startup wipes the modules/config/frontend subfolders and
+      # re-copies them from the image's distribution dir on every boot.
+      - openmrs-pihsl-data:/openmrs/data
     healthcheck:
-      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/127.0.0.1/8080'"]
-      start_period: 300s
-      interval: 10s
-      timeout: 5s
-      retries: 30
+      # Real readiness check: session REST endpoint returns 2xx (or a login
+      # redirect) once the OpenMRS context is up. First boot runs the whole
+      # PIH SL Initializer load, so allow a long start period.
+      test: ["CMD-SHELL", "code=$$(curl -sk -o /dev/null -w '%{http_code}' http://localhost:8080/openmrs/ws/rest/v1/session || echo 000); case $$code in 000|5*) exit 1;; *) exit 0;; esac"]
+      start_period: 1500s
+      interval: 30s
+      timeout: 10s
+      retries: 60
 
   # Test synchronizing data and metadata between two DHIS2 instances
   # Run
@@ -225,5 +238,5 @@ volumes:
   db-dump: {}
   pg-data:
   bridge-data:
-  openmrs-db-data:
-  openmrs-data:
+  openmrs-pihsl-db-data:
+  openmrs-pihsl-data:

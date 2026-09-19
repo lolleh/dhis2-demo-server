@@ -12,6 +12,7 @@ while true; do
         echo "Applying custom login page to $LOGIN_DIR"
         cp /custom-login/index.html "$LOGIN_DIR/index.html"
         cp /custom-login/custom-logo.png "$LOGIN_DIR/custom-logo.png"
+        cp /custom-login/dhis2-logo.svg "$LOGIN_DIR/dhis2-logo.svg"
         echo "Custom login page applied successfully."
         break
     fi

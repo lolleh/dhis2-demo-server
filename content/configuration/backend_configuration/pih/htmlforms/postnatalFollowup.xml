@@ -1,0 +1,24 @@
+<htmlform formUuid="929df787-1236-4cb8-a3a2-5aa7a7600d8c"
+          formName="Postnatal Followup"
+          formEncounterType="b7a7c300-f7e5-4d38-a388-fc178ab02e78"
+          formVersion="1.1">
+
+    <subform path="configuration/pih/subforms/encounter-with-sections.xml">
+        <h2 subform-parameter="encounter-type-name"><uimessage code="ui.i18n.EncounterType.name.b7a7c300-f7e5-4d38-a388-fc178ab02e78"/></h2>
+        <div subform-parameter="encounter-provider-location-date-section">
+            <subform path="configuration/pih/subforms/encounter-provider-location-date.xml">
+                <span subform-parameter="encounter-provider-widget">
+                    <encounterProviderAndRole default="currentUser"
+                                              encounterRole="4f10ad1a-ec49-48df-98c7-1391c6ac7f05"
+                                              providerRoles="${providerGroup.group1}"
+                                              required="true"/>
+                </span>
+                <span subform-parameter="encounter-location-widget">
+                    <encounterLocation default="SessionAttribute:emrContext.sessionLocationId" tags="Maternal and Child Location"/>
+                </span>
+            </subform>
+        </div>
+    </subform>
+
+</htmlform>
+

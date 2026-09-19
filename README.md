@@ -95,7 +95,7 @@ docker compose up -d
 | Debugger | `localhost:8089` | JDWP debug port |
 | JMX | `localhost:9011` | JMX monitoring |
 | Database | `localhost:5435` | PostgreSQL 16 + PostGIS |
-| OpenMRS | `http://localhost:8090/openmrs` | OpenMRS reference application (demo distro) |
+| OpenMRS | `http://localhost:8090/openmrs` | OpenMRS 2.8.x PIH Sierra Leone EMR |
 
 ## Configuration
 
@@ -117,14 +117,14 @@ cp .env.example .env
 
 ## Local OpenMRS Server
 
-This project also starts a local [OpenMRS](https://openmrs.org/) reference application (demo distro) alongside DHIS2, so you can build and test DHIS2 ↔ OpenMRS integrations locally without any remote services.
+This project also starts a local [OpenMRS](https://openmrs.org/) server running the PIH Sierra Leone EMR alongside DHIS2, so you can build and test DHIS2 ↔ OpenMRS integrations locally without any remote services.
 
-- **URL**: `http://localhost:8090/openmrs`
+- **URL**: `http://localhost:8090/openmrs` (O3 frontend at `http://localhost:8090/openmrs/spa`, redirected to the PIH login-location page until a session location is selected)
 - **Credentials**: username `admin`, password `Admin123`
-- **Image**: `openmrs/openmrs-reference-application-distro:demo`
+- **Image**: `partnersinhealth/pihsl-emr:latest` (OpenMRS 2.8.9 + Initializer 2.12 + PIH SL config, Java 17 / Tomcat 9). Override with `OPENMRS_IMAGE` in `.env`.
 - **Database**: MySQL 5.7 (`openmrs-db` service, internal to the Docker network)
 
-The first start initializes the OpenMRS demo database, which takes a few minutes (see the `openmrs` container healthcheck). The bridge waits for OpenMRS to become healthy before it starts.
+The first start initializes a fresh OpenMRS database and runs the PIH SL Initializer config, which takes 20–30 minutes (a new `openmrs` healthcheck waits for a real HTTP response). The bridge waits for OpenMRS to become healthy before it starts.
 
 ### Accessing OpenMRS
 
@@ -134,16 +134,18 @@ The first start initializes the OpenMRS demo database, which takes a few minutes
    ```
 2. Open [http://localhost:8090/openmrs](http://localhost:8090/openmrs) in your browser
 3. Log in with username `admin` and password `Admin123`
+4. Pick a session location (e.g. KGH) to enter the O3 SPA
 
-> The first page load may take a few minutes while the demo database initializes. You can check progress with `docker compose ps` (the `openmrs` service shows `healthy` when ready) or watch logs with `docker compose logs -f openmrs`.
+> The first boot is slow while the database and Initializer run — watch progress with `docker compose ps` (the `openmrs` service shows `healthy` when serving) or `docker compose logs -f openmrs`. The OpenMRS DB and data live in the named volumes `openmrs-pihsl-db-data` and `openmrs-pihsl-data`; wiping them resets OpenMRS to first boot.
 
 ### Configuration
 
-The `openmrs` and `openmrs-db` services read from `.env`:
+The `openmrs` and `openmrs-db` services read from `.env`. The PIH SL image uses `OMRS_*` env vars (`OMRS_DB_*`, `OMRS_ADMIN_USER_PASSWORD`, `OMRS_EXTRA_pih_config`, `OMRS_EXTRA_initializer_startup_load`, ...) which the compose file maps from the bridge-facing `OPENMRS_*` variables below:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `OPENMRS_URL` | `http://openmrs:8080/openmrs` | URL the bridge uses to reach OpenMRS |
+| `OPENMRS_IMAGE` | `partnersinhealth/pihsl-emr:latest` | OpenMRS Docker image |
 | `OPENMRS_USERNAME` | `admin` | OpenMRS API user (used by the bridge) |
 | `OPENMRS_PASSWORD` | `Admin123` | OpenMRS API password |
 | `OPENMRS_DB_NAME` | `openmrs` | MySQL database name |
