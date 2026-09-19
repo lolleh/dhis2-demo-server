@@ -1283,3 +1283,10 @@ body:has(.lab-order-entry) #cancel-button {
     font-size: 16px;
     padding: 8px 20px;
 }
+
+/* Register forms: capture encounter time but keep the time controls hidden */
+body:has(#who-when-where) select.hfe-hours,
+body:has(#who-when-where) select.hfe-minutes,
+body:has(#who-when-where) select.hfe-seconds {
+    display: none !important;
+}
