@@ -1,0 +1,173 @@
+/*
+ * PIH Labs look-and-feel overlay for the O3 ES dispensing SPA.
+ * Matches labOrderList.page styling (dark teal header, zebra rows,
+ * gold accent, purple links — the pihcore dispensing.scss palette).
+ * Loaded AFTER sl.css through the same SPA stylesheets mechanism.
+ *
+ * Scoped to the dispensing extension-slot / .dispensing tree so nothing
+ * leaks into other SPA routes. Overrides focus on the parts users align
+ * against the legacy labs page: header band, table header/rows, action
+ * buttons, and the labs palette variables (redeclared here so config
+ * that references them resolves even if config.json order changes).
+ */
+
+:root.custom-dispensing,
+.openmrs.dispensing {
+  --brand-teal: #0f5149;
+  --brand-teal-hover: #0b3d37;
+  --brand-gold: #f6be00;
+  --brand-gold-hover: #e0ac00;
+  --brand-purple: #323372;
+  --brand-purple-hover: #5b5c8e;
+  --brand-purple-bg: #ececf5;
+  --action-green: #34c00b;
+  --action-green-hover: #2da60a;
+  --danger: #f1394d;
+  --danger-hover: #d72f41;
+  --text-ink: #3e3e3f;
+  --row-zebra: #f7f7f7;
+  --border-soft: #e3e3e3;
+}
+
+/* -------- header band (labs dark teal title bar) -------- */
+[data-extension-slot-name="dispensing home"] header,
+[data-extension-slot-name="dispensing home"] .dispensing-header,
+[data-extension-slot-name="dispensing"] header,
+.dispensing-header {
+  background: var(--brand-teal);
+  color: #fff;
+  border-bottom: 6px solid var(--brand-gold);
+  padding: 1rem 1.25rem;
+}
+
+[data-extension-slot-name="dispensing home"] header *,
+[data-extension-slot-name="dispensing home"] .dispensing-header *,
+[data-extension-slot-name="dispensing"] header *,
+.dispensing-header * {
+  color: #fff;
+}
+
+[data-extension-slot-name="dispensing home"] header h1,
+[data-extension-slot-name="dispensing home"] .dispensing-header h1,
+[data-extension-slot-name="dispensing"] header h1,
+.dispensing-header h1 {
+  font-size: 1.35rem;
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+
+/* -------- table chrome (labs striped order table) -------- */
+[data-extension-slot-name="dispensing"] table,
+[data-extension-slot-name="dispensing home"] table,
+.dispensing table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+[data-extension-slot-name="dispensing"] table thead th,
+[data-extension-slot-name="dispensing home"] table thead th,
+.dispensing table thead th {
+  background: var(--brand-teal);
+  color: #fff;
+  font-weight: 600;
+  text-align: left;
+  padding: 0.55rem 0.75rem;
+  border-bottom: 3px solid var(--brand-gold);
+}
+
+[data-extension-slot-name="dispensing"] table tbody td,
+[data-extension-slot-name="dispensing home"] table tbody td,
+.dispensing table tbody td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--border-soft);
+  color: var(--text-ink);
+}
+
+[data-extension-slot-name="dispensing"] table tbody tr:nth-child(odd),
+[data-extension-slot-name="dispensing home"] table tbody tr:nth-child(odd),
+.dispensing table tbody tr:nth-child(odd) {
+  background: var(--row-zebra);
+}
+
+[data-extension-slot-name="dispensing"] table tbody tr:hover,
+[data-extension-slot-name="dispensing home"] table tbody tr:hover,
+.dispensing table tbody tr:hover {
+  background: color-mix(in srgb, var(--brand-teal) 8%, #fff);
+}
+
+/* -------- links: labs purple, with gold hover rule -------- */
+[data-extension-slot-name="dispensing"] a,
+[data-extension-slot-name="dispensing home"] a,
+.dispensing a {
+  color: var(--brand-purple);
+  text-decoration: underline;
+}
+
+[data-extension-slot-name="dispensing"] a:hover,
+[data-extension-slot-name="dispensing home"] a:hover,
+.dispensing a:hover {
+  color: var(--brand-purple-hover);
+  text-decoration: underline overline solid var(--brand-gold);
+}
+
+/* -------- action buttons: gold primary / teal secondary / green confirm -------- */
+[data-extension-slot-name="dispensing"] button,
+[data-extension-slot-name="dispensing home"] button,
+.dispensing button {
+  font-weight: 600;
+}
+
+[data-extension-slot-name="dispensing"] button.confirm,
+[data-extension-slot-name="dispensing home"] button.confirm,
+.dispensing button.confirm {
+  background: var(--action-green);
+  border: 2px solid var(--action-green);
+  color: #fff;
+}
+
+[data-extension-slot-name="dispensing"] button.confirm:hover,
+[data-extension-slot-name="dispensing home"] button.confirm:hover,
+.dispensing button.confirm:hover {
+  background: var(--action-green-hover);
+  border-color: var(--action-green-hover);
+}
+
+[data-extension-slot-name="dispensing"] button.cancel,
+[data-extension-slot-name="dispensing home"] button.cancel,
+.dispensing button.cancel,
+[data-extension-slot-name="dispensing"] button[type="button"],
+[data-extension-slot-name="dispensing home"] button[type="button"],
+.dispensing button[type="button"] {
+  background: #fff;
+  border: 2px solid var(--brand-teal);
+  color: var(--brand-teal);
+}
+
+/* -------- fields: teal focus ring (labs inputs) -------- */
+[data-extension-slot-name="dispensing"] input:focus,
+[data-extension-slot-name="dispensing home"] input:focus,
+.dispensing input:focus,
+[data-extension-slot-name="dispensing"] select:focus,
+[data-extension-slot-name="dispensing home"] select:focus,
+.dispensing select:focus {
+  outline: 0;
+  border-color: var(--brand-teal);
+  box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--brand-teal) 25%, #fff);
+}
+
+/* -------- severity / warning rows: labs gold / red --------- */
+[data-extension-slot-name="dispensing"] tr.warning,
+[data-extension-slot-name="dispensing home"] tr.warning,
+.dispensing tr.warning {
+  background: color-mix(in srgb, var(--brand-gold) 25%, #fff);
+}
+
+[data-extension-slot-name="dispensing"] tr.danger,
+[data-extension-slot-name="dispensing home"] tr.danger,
+[data-extension-slot-name="dispensing"] tr.urgent,
+[data-extension-slot-name="dispensing home"] tr.urgent,
+.dispensing tr.danger,
+.dispensing tr.urgent {
+  background: color-mix(in srgb, var(--danger) 12%, #fff);
+}
