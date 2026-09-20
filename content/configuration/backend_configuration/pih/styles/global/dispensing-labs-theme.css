@@ -29,12 +29,12 @@
   --border-soft: #e3e3e3;
 }
 
-/* -------- header band (labs dark teal title bar) -------- */
+/* -------- header band (labs blue-gray title bar, matching findPatient.page labs family #6f9792) -------- */
 [data-extension-slot-name="dispensing home"] header,
 [data-extension-slot-name="dispensing home"] .dispensing-header,
 [data-extension-slot-name="dispensing"] header,
 .dispensing-header {
-  background: var(--brand-teal);
+  background: var(--brand-blue-gray, #6f9792);
   color: #fff;
   border-bottom: 6px solid var(--brand-gold);
   padding: 1rem 1.25rem;
