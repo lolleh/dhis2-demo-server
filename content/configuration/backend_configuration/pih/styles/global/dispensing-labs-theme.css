@@ -171,3 +171,71 @@
 .dispensing tr.urgent {
   background: color-mix(in srgb, var(--danger) 12%, #fff);
 }
+
+
+/* ================= labs family overlay: appointments + home routes ================= */
+/* Same header band, zebra rows, gold underline, purple links, teal focus
+   as the labs (findPatient) family — applied to the O3 appointments and
+   home routes so the whole O3 primary workflow matches the labs look. */
+
+[data-extension-slot-name="appointments"] header,
+[data-extension-slot-name="home"] header,
+.appointments header,
+.home > header {
+  background: var(--brand-teal);
+  color: #fff;
+  border-bottom: 6px solid var(--brand-gold);
+  padding: 1rem 1.25rem;
+}
+
+[data-extension-slot-name="appointments"] header *,
+[data-extension-slot-name="home"] header *,
+.appointments header *,
+.home > header * {
+  color: #fff;
+}
+
+[data-extension-slot-name="appointments"] header h1,
+[data-extension-slot-name="home"] header h1,
+.appointments header h1,
+.home > header h1 {
+  font-size: 1.35rem;
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+
+[data-extension-slot-name="appointments"] table,
+[data-extension-slot-name="home"] table,
+.appointments table,
+.home table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+[data-extension-slot-name="appointments"] table thead th,
+[data-extension-slot-name="home"] table thead th,
+.appointments table thead th,
+.home table thead th {
+  background: var(--brand-teal);
+  color: #fff;
+  font-weight: 600;
+  text-align: left;
+  padding: 0.55rem 0.75rem;
+  border-bottom: 3px solid var(--brand-gold);
+}
+
+[data-extension-slot-name="appointments"] table tbody tr:nth-child(odd),
+[data-extension-slot-name="home"] table tbody tr:nth-child(odd),
+.appointments table tbody tr:nth-child(odd),
+.home table tbody tr:nth-child(odd) {
+  background: var(--row-zebra);
+}
+
+[data-extension-slot-name="appointments"] a,
+[data-extension-slot-name="home"] a,
+.appointments a,
+.home a {
+  color: var(--brand-purple);
+  text-decoration: underline;
+}
