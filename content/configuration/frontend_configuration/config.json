@@ -16,7 +16,6 @@
       }
     ]
   },
-
   "@openmrs/esm-login-app": {
     "chooseLocation": {
       "enabled": true,
@@ -297,7 +296,7 @@
     },
     "visitQueueNumberAttributeUuid": "",
     "defaultFacilityUrl": "",
-   "queueTables": {
+    "queueTables": {
       "columnDefinitions": [
         {
           "id": "emr-id",
@@ -325,7 +324,14 @@
       ],
       "tableDefinitions": [
         {
-          "columns": ["patient-name", "emr-id", "patient-age", "check-in-date", "wait-time", "triage-waiting-queue-actions"],
+          "columns": [
+            "patient-name",
+            "emr-id",
+            "patient-age",
+            "check-in-date",
+            "wait-time",
+            "triage-waiting-queue-actions"
+          ],
           "appliedTo": [
             {
               "queue": "${queue.triage.uuid}",
@@ -334,7 +340,13 @@
           ]
         },
         {
-          "columns": ["patient-name", "emr-id", "patient-age", "in-service-time", "triage-waiting-queue-actions"],
+          "columns": [
+            "patient-name",
+            "emr-id",
+            "patient-age",
+            "in-service-time",
+            "triage-waiting-queue-actions"
+          ],
           "appliedTo": [
             {
               "queue": "${queue.triage.uuid}",
@@ -343,7 +355,14 @@
           ]
         },
         {
-          "columns": ["patient-name", "emr-id", "patient-age", "priority", "wait-time", "actions"]
+          "columns": [
+            "patient-name",
+            "emr-id",
+            "patient-age",
+            "priority",
+            "wait-time",
+            "actions"
+          ]
         }
       ]
     }
@@ -389,7 +408,9 @@
           "tags": [
             {
               "color": "red",
-              "appliedToConceptSets": ["${concept.complicationsAtDelivery.uuid}"]
+              "appliedToConceptSets": [
+                "${concept.complicationsAtDelivery.uuid}"
+              ]
             }
           ]
         }
@@ -406,7 +427,7 @@
           "orders": {
             "orderTypes": [
               {
-                "label": "Labs", 
+                "label": "Labs",
                 "uuid": "${orderType.testOrder.uuid}"
               }
             ]
@@ -423,11 +444,13 @@
     "hideWorkspaceVitalsLinks": true,
     "extensionSlots": {
       "ward-patient": {
-	"configure": {
-	  "ward-patient-discharge": {
-	    "allowedSessionLocationUuids": ["989a9b23-d1f9-11f0-9d46-169316be6a48"]
-	  }
-	},
+        "configure": {
+          "ward-patient-discharge": {
+            "allowedSessionLocationUuids": [
+              "989a9b23-d1f9-11f0-9d46-169316be6a48"
+            ]
+          }
+        },
         "remove": [
           "ward-patient-order-basket",
           "ward-patient-clinical-forms"
@@ -450,6 +473,8 @@
     "orders": {
       "labOrderableConcepts": "880468f0-eec0-4d70-861a-fe12d4ba5099"
     }
-  }
+  },
+  "stylesheets": [
+    "http://localhost:8090/openmrs/ms/uiframework/resource/file/pih/styles/global/dispensing-labs-theme.css"
+  ]
 }
-
