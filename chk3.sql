@@ -1,1 +1,0 @@
-SELECT COUNT(*) AS login_locs FROM location l JOIN location_tag_map m ON m.location_id=l.location_id JOIN location_tag t ON t.location_tag_id=m.location_tag_id WHERE t.name='Login Location' AND l.retired=0;

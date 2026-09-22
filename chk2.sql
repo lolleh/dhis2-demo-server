@@ -1,1 +1,0 @@
-SELECT l.location_id, l.name, COUNT(*) AS login_tags FROM location l JOIN location_tag_map m ON m.location_id=l.location_id JOIN location_tag t ON t.location_tag_id=m.location_tag_id WHERE l.location_id BETWEEN 40 AND 53 AND t.name='Login Location' GROUP BY l.location_id, l.name;
