@@ -168,6 +168,7 @@ services:
   my-app:
     build: ./my-app
     image: dhis2-demo-my-app:latest
+    pull_policy: build
     working_dir: /app
     command: sh -c "rm -rf .d2 && npm start"
     volumes:
