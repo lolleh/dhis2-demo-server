@@ -2,7 +2,7 @@
 # See the production oriented example under development instead - https://github.com/dhis2/docker-deployment
 
 x-web-base: &web-base
-  image: "${DHIS2_IMAGE:-dhis2/core-dev:local}"
+  image: "${DHIS2_IMAGE:-dhis2/core-dev:latest}"
   volumes:
     - ./docker/log4j2.xml:/opt/dhis2/log4j2.xml:ro
   environment:
