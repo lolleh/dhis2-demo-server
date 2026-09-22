@@ -273,6 +273,41 @@ This starts a second DHIS2 instance on port 8082 with its own database on port 5
 
 ## Troubleshooting
 
+### `DB_USERNAME is not set` warnings + `dhis2/core-dev:local: not found`
+
+On a fresh clone `.env` does not exist (it is gitignored), so Docker Compose warns that `DB_USERNAME`/`DB_PASSWORD` are blank and falls back to the broken image tag `dhis2/core-dev:local`.
+
+Create `.env` from the template:
+
+```bash
+cp .env.example .env
+docker compose up -d
+```
+
+`.env.example` configures `DHIS2_IMAGE=dhis2/core-dev:latest` (the tag that actually exists on Docker Hub) plus the default database credentials.
+
+### `Error response from daemon: No such image: <image>:latest`
+
+If common images like `busybox`, `mysql`, or `curlimages/curl` report "No such image", the failure is at the Docker level, not this project. These images exist on Docker Hub; the daemon cannot reach/resolve it. Check for a registry mirror or proxy:
+
+```bash
+cat /etc/docker/daemon.json   # look for a "registry-mirrors" entry
+docker pull busybox            # does a plain pull work?
+```
+
+Remove or correct the mirror in `/etc/docker/daemon.json` and restart Docker, or run from a network that can reach Docker Hub.
+
+### `pull access denied for dhis2-demo-my-app`
+
+The `my-app` service is built locally (its image is never published to a registry), so Compose must not try to pull it. The compose file already sets `pull_policy: build` for it; if you see this error, make sure you are on the latest compose file and rebuild:
+
+```bash
+git pull
+docker compose up -d --build
+```
+
+If the container is still starting from a stale image, remove it first: `docker compose rm -f my-app && docker compose up -d my-app`.
+
 ### Port already in use
 
 If you see an error like `Bind for 127.0.0.1:<port> failed: port is already allocated`, a process on your host is already using that port.
