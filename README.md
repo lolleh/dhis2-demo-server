@@ -87,6 +87,18 @@ docker compose up -d
 |----------|----------|
 | `admin` | `district` |
 
+## Custom Login Page
+
+The DHIS2 login page at `http://localhost:8091/login/` is branded for the Ministry of Health of Sierra Leone and replaces the default login app UI.
+
+- **Branding**: Sierra Leone Ministry of Health seal, DHIS2 logo, and HEAP (Health Equity Acceleration Partnership) logo in a horizontal brand strip on a light cream/tan panel, plus the Sierra Leone flag with the DHIS2 wordmark in the sign-in card header.
+- **Source**: the page and assets live in `custom-login/` (`index.html`, `moh-logo.png`, `heap-logo.png`, `dhis2-logo.svg`, `custom-logo.png`).
+- **Loading**: the `web` service mounts `./custom-login` and runs `docker/start-with-custom-login.sh` on startup, which waits for the DHIS2 login app to be installed and then copies the custom files into the app directory. Restart to re-apply:
+  ```bash
+  docker compose restart web
+  ```
+- **Note**: DHIS2 serves its own cached copy of the login app, so edits to `custom-login/` only take effect after the container restarts (or another manual sync into the container).
+
 ## Services
 
 | Service | URL | Purpose |

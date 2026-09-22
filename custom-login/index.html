@@ -3,17 +3,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-  <meta name="theme-color" content="#0b7a2e" />
+  <meta name="theme-color" content="#8d6a47" />
   <title>Sign in | Ministry of Health - Sierra Leone</title>
   <style>
     :root {
-      --green-900: #063d18;
-      --green-700: #0a5d28;
-      --green-500: #0f8a3d;
-      --green-400: #1aa54d;
-      --green-300: #2fc261;
+      --green-900: #b3a58f;
+      --green-700: #dfd0b4;
+      --green-500: #f5ecdd;
+      --green-400: #eeddc0;
+      --green-300: #ffe6c4;
+      --brown: #5d4630;
       --navy: #0b2e5b;
-      --gold: #f6c453;
+      --gold: #b8863b;
       --ink: #17252b;
       --muted: #5b6b66;
       --line: #e3eae6;
@@ -22,7 +23,7 @@
       --danger: #c62828;
       --danger-bg: #fdecea;
       --radius: 14px;
-      --shadow: 0 24px 60px -18px rgba(6, 61, 24, 0.35);
+      --shadow: 0 24px 60px -18px rgba(93, 70, 48, 0.35);
       --font: "Roboto", system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
     }
 
@@ -50,10 +51,10 @@
       flex-direction: column;
       justify-content: space-between;
       padding: clamp(32px, 5vw, 72px);
-      color: var(--white);
+      color: #4a3a28;
       background:
         radial-gradient(circle at 12% 8%, rgba(255, 255, 255, 0.10), transparent 38%),
-        radial-gradient(circle at 88% 90%, rgba(0, 114, 198, 0.28), transparent 46%),
+        radial-gradient(circle at 88% 90%, rgba(166, 130, 96, 0.35), transparent 46%),
         linear-gradient(160deg, var(--green-500) 0%, var(--green-700) 52%, var(--green-900) 100%);
       overflow: hidden;
     }
@@ -66,20 +67,41 @@
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='520' height='520' viewBox='0 0 520 520'%3E%3Cg fill='none' stroke='rgba(255,255,255,0.06)' stroke-width='1.5'%3E%3Cpath d='M0 520 L520 0'/%3E%3Cpath d='M130 520 L520 130'/%3E%3Cpath d='M0 390 L390 0'/%3E%3Cpath d='M260 520 L520 260'/%3E%3C/g%3E%3Cg fill='rgba(255,255,255,0.05)'%3E%3Ccircle cx='90' cy='90' r='3'/%3E%3Ccircle cx='430' cy='430' r='3'/%3E%3Ccircle cx='470' cy='70' r='2'/%3E%3Ccircle cx='60' cy='450' r='2'/%3E%3C/g%3E%3C/svg%3E");
     }
 
-    .side-top { position: relative; z-index: 1; display: flex; align-items: center; gap: 18px; }
-    .side-top .brand img {
-      height: clamp(120px, 14vh, 170px);
-      width: auto;
-      filter: drop-shadow(0 14px 28px rgba(0, 0, 0, 0.25));
+    .side-top { position: relative; z-index: 1; display: flex; align-items: center; }
+    .side-top .brand {
+      display: flex;
+      align-items: center;
+      gap: clamp(14px, 2vw, 22px);
     }
-    .side-top .brand-copy .country {
+    .side-top .brand img { display: block; filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.3)); }
+    .side-top .brand .moh-logo {
+      height: clamp(76px, 9vh, 108px);
+      width: auto;
+      border-radius: 50%;
+    }
+    .side-top .brand .heap-logo {
+      height: clamp(36px, 5vh, 58px);
+      width: auto;
+    }
+    .side-top .brand .dhis2-logo {
+      height: clamp(32px, 4.5vh, 52px);
+      width: auto;
+    }
+    .side-top .brand .brand-sep {
+      width: 2px;
+      height: clamp(52px, 6.5vh, 80px);
+      background: linear-gradient(180deg, transparent, rgba(60, 70, 80, 0.35), transparent);
+    }
+    .side-center { position: relative; z-index: 1; }
+    .brand-copy { position: relative; z-index: 1; margin-bottom: clamp(14px, 2vh, 26px); }
+    .brand-copy .country {
       font-size: 0.82rem;
       letter-spacing: 0.32em;
       text-transform: uppercase;
       opacity: 0.85;
       font-weight: 500;
     }
-    .side-top .brand-copy .org {
+    .brand-copy .org {
       font-size: clamp(1.35rem, 2.4vw, 2.1rem);
       font-weight: 700;
       line-height: 1.1;
@@ -143,6 +165,12 @@
     }
 
     .card-head { margin-bottom: 26px; }
+    .card-head .logos {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
     .card-head .flag {
       display: inline-block;
       width: 34px;
@@ -150,8 +178,12 @@
       border-radius: 4px;
       overflow: hidden;
       border: 1px solid rgba(0, 0, 0, 0.1);
-      margin-bottom: 14px;
       background: linear-gradient(180deg, #1eb53a 0%, #1eb53a 33%, #ffffff 33%, #ffffff 66%, #0072c6 66%);
+    }
+    .card-head .dhis2 {
+      height: 22px;
+      width: auto;
+      display: block;
     }
     .card-head h2 { font-size: 1.5rem; font-weight: 800; }
     .card-head .subtitle { color: var(--muted); font-size: 0.95rem; margin-top: 6px; }
@@ -205,7 +237,7 @@
     .input-wrap input::placeholder { color: #9aa8a2; }
     .input-wrap input:focus {
       border-color: var(--green-400);
-      box-shadow: 0 0 0 3px rgba(26, 165, 77, 0.18);
+      box-shadow: 0 0 0 3px rgba(189, 148, 104, 0.28);
     }
     .input-wrap .toggle-pass {
       position: absolute;
@@ -325,20 +357,29 @@
     <!-- Brand panel -->
     <section class="side" aria-label="Ministry of Health">
       <div class="side-top">
-        <div class="brand"><img src="./custom-logo.png" alt="Ministry of Health of Sierra Leone, in partnership with HEAP" /></div>
+        <div class="brand">
+          <img class="moh-logo" src="./moh-logo.png" alt="Ministry of Health of Sierra Leone" />
+          <span class="brand-sep" aria-hidden="true"></span>
+          <img class="dhis2-logo" src="./dhis2-logo.svg" alt="DHIS2" />
+          <span class="brand-sep" aria-hidden="true"></span>
+          <img class="heap-logo" src="./heap-logo.png" alt="Health Equity Acceleration Partnership (HEAP)" />
+        </div>
+      </div>
+
+      <div class="side-center">
         <div class="brand-copy">
           <div class="country">Republic of Sierra Leone</div>
           <div class="org">Ministry of Health</div>
         </div>
-      </div>
 
-      <div class="side-middle">
-        <div class="eyebrow">Health Information Systems</div>
-        <h1>One platform for the nation&rsquo;s health data</h1>
-        <p>
-          Securely access integrated national health information and analytics, supporting
-          evidence-based decisions across districts, facilities and programmes of Sierra Leone.
-        </p>
+        <div class="side-middle">
+          <div class="eyebrow">Health Information Systems</div>
+          <h1>One platform for the nation&rsquo;s health data</h1>
+          <p>
+            Securely access integrated national health information and analytics, supporting
+            evidence-based decisions across districts, facilities and programmes of Sierra Leone.
+          </p>
+        </div>
       </div>
 
       <div class="side-bottom">
@@ -356,7 +397,10 @@
     <section class="form-side" aria-label="Sign in">
       <form class="card" id="loginForm" novalidate>
         <div class="card-head">
-          <span class="flag" aria-hidden="true"></span>
+          <div class="logos">
+            <span class="flag" aria-hidden="true"></span>
+            <img class="dhis2" src="./dhis2-logo.svg" alt="DHIS2" />
+          </div>
           <h2>Sign in</h2>
           <p class="subtitle">Welcome back &mdash; please enter your details to continue.</p>
         </div>
@@ -396,7 +440,7 @@
 
         <div class="demo-hint">
           <b>Demo environments:</b> use the credentials provided by your administrator.
-          On the shared demo instance this is <b>vlolleh / password</b>.
+          On the shared demo instance this is <b>admin / district</b> (or <b>vlolleh / district</b>).
         </div>
 
         <p class="foot-note">
@@ -523,7 +567,9 @@
           })
           .then(function (res) {
             if (res.ok) {
-              window.location.reload();
+              return res.json().catch(function () { return {}; }).then(function (payload) {
+                window.location.href = (payload && payload.redirectUrl) || baseUrl + '/';
+              });
             } else if (res.status === 404 || res.status === 405) {
               return legacyLogin();
             } else {
