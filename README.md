@@ -158,6 +158,7 @@ The `openmrs` and `openmrs-db` services read from `.env`. The PIH SL image uses 
 |----------|---------|-------------|
 | `OPENMRS_URL` | `http://openmrs:8080/openmrs` | URL the bridge uses to reach OpenMRS |
 | `OPENMRS_IMAGE` | `partnersinhealth/pihsl-emr:latest` | OpenMRS Docker image |
+| `OPENMRS_PIH_CONFIG` | `sierraLeone,sierraLeone-kgh,sierraLeone-kgh-test` | PIH site config chain loaded at startup. Must match a profile shipped by the image: the stock image provides `sierraLeone`, `-kgh`, `-kgh-test`, `-wellbody`, `-wellbody-gladi`, `-wellbody-demo`; the locally-built `dhis2-demo-openmrs:moh-*` images also add `-mongo`, `-falaba`, `-sinkunia`. Set an unsupported profile and OpenMRS fails to start with `HTTP Status 500` / `Error loading PIH config`. |
 | `OPENMRS_USERNAME` | `admin` | OpenMRS API user (used by the bridge) |
 | `OPENMRS_PASSWORD` | `Admin123` | OpenMRS API password |
 | `OPENMRS_DB_NAME` | `openmrs` | MySQL database name |
@@ -307,6 +308,25 @@ docker compose up -d --build
 ```
 
 If the container is still starting from a stale image, remove it first: `docker compose rm -f my-app && docker compose up -d my-app`.
+
+### OpenMRS shows `HTTP Status 500` / `Error loading PIH config`
+
+OpenMRS fails to start when the PIH site config chain references a profile the image does not ship. The default (`sierraLeone,sierraLeone-kgh,sierraLeone-kgh-test`) matches the stock image. If you changed `OPENMRS_PIH_CONFIG` to a profile like `sierraLeone,sierraLeone-mongo`, confirm it exists:
+
+```bash
+docker run --rm --entrypoint sh partnersinhealth/pihsl-emr:latest \
+  -c 'ls /openmrs/distribution/openmrs_config/pih/pih-config-*.json'
+```
+
+Fix `.env` to a shipped profile, recreate OpenMRS, and wipe the half-initialized DB so the first boot runs cleanly (this resets OpenMRS to first boot):
+
+```bash
+docker compose stop openmrs openmrs-db
+docker volume rm <project>_openmrs-pihsl-data <project>_openmrs-pihsl-db-data  # confirm names with: docker volume ls | grep openmrs
+docker compose up -d openmrs && docker compose logs -f openmrs
+```
+
+The very first boot initializes a fresh OpenMRS database and runs the Initializer, taking 20–30 minutes — wait for `(healthy)` in `docker compose ps` before opening the UI at `http://localhost:8090/openmrs`.
 
 ### Port already in use
 

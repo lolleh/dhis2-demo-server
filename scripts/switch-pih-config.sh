@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
 #
 # Switch the active PIH site config for the demo OpenMRS.
+# NOTE: only profiles shipped by the running image work. stock
+# partnersinhealth/pihsl-emr supports kgh / wellbody; the locally-built
+# dhis2-demo-openmrs:moh-* images add mongo / falaba / sinkunia.
 # Only ONE site config is active at a time: the stack loads a single
 # system-wide pih.config chain (read into System properties at boot).
 # The active chain is chosen by the OPENMRS_PIH_CONFIG env var in
-# docker-compose.yml (default: mongo).
+# docker-compose.yml.
 #
 # Usage:  ./switch-pih-config.sh <site>
 #   mongo    -> Mongo Bendugu CHC  (default)

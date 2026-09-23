@@ -116,11 +116,13 @@ services:
       # Lean default heap in the image (-XX:NewSize=128m) is too small for the
       # full PIH SL module set + Initializer config run.
       OMRS_JAVA_MEMORY_OPTS: "-Xms512m -Xmx4g -XX:NewSize=128m"
-      # PIH SL config profile loaded on startup (same default the image ships).
-      # Active site config lives in pih/config/pih-config-sierraLeone-*.json
-      # (one active at a time). Switch with:
+      # PIH SL config profile loaded on startup. Must match a profile the image
+      # actually ships: the stock partnersinhealth/pihsl-emr image provides
+      # sierraLeone (+ -kgh, -kgh-test, -wellbody, -wellbody-gladi, -wellbody-demo)
+      # with this default; the locally-built dhis2-demo-openmrs:moh-* images add
+      # -mongo, -falaba and -sinkunia too. Switch with:
       #   OPENMRS_PIH_CONFIG=sierraLeone,sierraLeone-falaba docker compose up -d openmrs
-      OMRS_EXTRA_pih_config: ${OPENMRS_PIH_CONFIG:-sierraLeone,sierraLeone-mongo}
+      OMRS_EXTRA_pih_config: ${OPENMRS_PIH_CONFIG:-sierraLeone,sierraLeone-kgh,sierraLeone-kgh-test}
       # Let Initializer load the baked-in PIH SL config on startup. 'continue_on_error'
       # keeps the server bootable if an individual domain fails to load.
       OMRS_EXTRA_initializer_startup_load: continue_on_error
