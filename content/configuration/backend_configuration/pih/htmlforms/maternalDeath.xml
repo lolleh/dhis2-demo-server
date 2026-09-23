@@ -47,7 +47,7 @@
         <span subform-parameter="encounter-provider-widget">
             <encounterProviderAndRole default="currentUser"
                                       encounterRole="4f10ad1a-ec49-48df-98c7-1391c6ac7f05"
-                                      providerRoles="${providerGroup.group2}"
+                                      providerRoles="2fa6f8da-aa58-11e8-98d0-529269fb1459,7207ba62-027f-4f9b-be67-a9f7a8a3abcc,2687b4be-3fd5-4e9d-8d10-9e2df18beeeb,556ceee6-d899-43d4-a98b-7973ebc85b75"
                                       required="true"/>
         </span>
     </subform>

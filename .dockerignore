@@ -1,0 +1,23 @@
+# only what the openmrs-image/Dockerfile needs
+.git
+.env
+node_modules
+**/node_modules
+my-app/.d2
+my-app/build
+my-app/i18n
+my-app/public
+my-app/src
+my-app/package-lock.json
+my-app/Dockerfile
+my-app/.dockerignore
+openmrs-forms/above-five-treatment-register/*.war
+docker
+bridge
+bridge-cf
+custom-login
+mockups
+scripts
+BRIDGE.md
+README.md
+docker-compose.yml

@@ -5,15 +5,15 @@
     "label": "pihcore.newbornIndicators.ucase",
     "extensions": [
       {
-        "extensionPointId": "${program.infant.uuid}.firstColumnFragments",
+        "extensionPointId": "dc1b588a-9b94-45e4-8346-71b7c9a24845.firstColumnFragments",
         "order": 1,
-        "requiredPrivilege": "${privilege.app_coreapps_patient_dashboard}",
+        "requiredPrivilege": "App: coreapps.patientDashboard",
         "require": null,
         "extensionParams": {
           "provider": "pihcore",
           "fragment": "dashboardwidgets/newbornIndicators",
           "fragmentConfig": {
-            "duringCurrentEnrollmentInProgram": "${program.infant.uuid}"
+            "duringCurrentEnrollmentInProgram": "dc1b588a-9b94-45e4-8346-71b7c9a24845"
           }
         }
       }
@@ -23,9 +23,9 @@
     "id": "infant.dashboard.visits",
     "extensions": [
       {
-        "extensionPointId": "${program.infant.uuid}.firstColumnFragments",
+        "extensionPointId": "dc1b588a-9b94-45e4-8346-71b7c9a24845.firstColumnFragments",
         "order": 2,
-        "requiredPrivilege": "${privilege.app_coreapps_patient_dashboard}",
+        "requiredPrivilege": "App: coreapps.patientDashboard",
         "require": null,
         "extensionParams": {
           "provider": "coreapps",
@@ -44,9 +44,9 @@
     "url": "/pihcore/visit/visit.page?patient={{patient.uuid}}#/visitList",
     "extensions": [
       {
-        "extensionPointId": "${program.infant.uuid}.firstColumnFragments",
+        "extensionPointId": "dc1b588a-9b94-45e4-8346-71b7c9a24845.firstColumnFragments",
         "order": 3,
-        "requiredPrivilege": "${privilege.app_coreapps_patient_dashboard}",
+        "requiredPrivilege": "App: coreapps.patientDashboard",
         "require": null,
         "extensionParams": {
           "provider": "pihcore",
@@ -57,11 +57,11 @@
     "config": {
       "encounterTypes": [
         {
-          "encounterType": "${encounterType.NEWBORN_ASSESSMENT.uuid}",
+          "encounterType": "6444b8d4-407d-444d-aa15-d6dff204ed83",
           "url": "/pihcore/visit/visit.page?patient={{patient.uuid}}&visit={{visit.uuid}}#/overview"
         }
       ],
-      "duringCurrentEnrollmentInProgram": "${program.infant.uuid}"
+      "duringCurrentEnrollmentInProgram": "dc1b588a-9b94-45e4-8346-71b7c9a24845"
     }
   },
   {
@@ -71,9 +71,9 @@
     "url": "/pihcore/visit/visit.page?patient={{patient.uuid}}#/visitList",
     "extensions": [
       {
-        "extensionPointId": "${program.infant.uuid}.firstColumnFragments",
+        "extensionPointId": "dc1b588a-9b94-45e4-8346-71b7c9a24845.firstColumnFragments",
         "order": 4,
-        "requiredPrivilege": "${privilege.app_coreapps_patient_dashboard}",
+        "requiredPrivilege": "App: coreapps.patientDashboard",
         "require": null,
         "extensionParams": {
           "provider": "pihcore",
@@ -84,11 +84,11 @@
     "config": {
       "encounterTypes": [
         {
-          "encounterType": "${encounterType.NEWBORN_DAILY_PROGRESS.uuid}",
+          "encounterType": "7e42e652-89e7-4559-80fd-41f42826c98c",
           "url": "/pihcore/visit/visit.page?patient={{patient.uuid}}&visit={{visit.uuid}}#/overview"
         }
       ],
-      "duringCurrentEnrollmentInProgram": "${program.infant.uuid}"
+      "duringCurrentEnrollmentInProgram": "dc1b588a-9b94-45e4-8346-71b7c9a24845"
     }
   },
   {
@@ -98,9 +98,9 @@
     "url": "/pihcore/visit/visit.page?patient={{patient.uuid}}#/visitList",
     "extensions": [
       {
-        "extensionPointId": "${program.infant.uuid}.firstColumnFragments",
+        "extensionPointId": "dc1b588a-9b94-45e4-8346-71b7c9a24845.firstColumnFragments",
         "order": 5,
-        "requiredPrivilege": "${privilege.app_coreapps_patient_dashboard}",
+        "requiredPrivilege": "App: coreapps.patientDashboard",
         "require": null,
         "extensionParams": {
           "provider": "pihcore",
@@ -109,21 +109,21 @@
             "fields": [
               {
                 "label" : "pihcore.apgar.tenMinutes",
-                "concept": "${concept.apgarAtTenMinutes.uuid}",
+                "concept": "6e9bbae6-253d-4b9e-ad22-c552ba51f2eb",
                 "minValue": "7"
               },
               {
                 "label" : "pihcore.apgar.fiveMinutes",
-                "concept": "${concept.apgarAtFiveMinutes.uuid}",
+                "concept": "159604AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
                 "minValue": "7"
               },
               {
                 "label" : "pihcore.apgar.oneMinute",
-                "concept": "${concept.apgarAtOneMinute.uuid}",
+                "concept": "6032b22c-e416-4c26-9962-ab061dc97ad8",
                 "minValue": "7"
               }
             ],
-            "duringCurrentEnrollmentInProgram": "${program.infant.uuid}"
+            "duringCurrentEnrollmentInProgram": "dc1b588a-9b94-45e4-8346-71b7c9a24845"
           }
         }
       }
@@ -136,9 +136,9 @@
     "url": "/pihcore/visit/visit.page?patient={{patient.uuid}}#/visitList",
     "extensions": [
       {
-        "extensionPointId": "${program.infant.uuid}.firstColumnFragments",
+        "extensionPointId": "dc1b588a-9b94-45e4-8346-71b7c9a24845.firstColumnFragments",
         "order": 6,
-        "requiredPrivilege": "${privilege.app_coreapps_patient_dashboard}",
+        "requiredPrivilege": "App: coreapps.patientDashboard",
         "require": null,
         "extensionParams": {
           "provider": "coreapps",
@@ -150,8 +150,8 @@
       "widget": "obsgraph",
       "icon": "fas fa-fw fa-chart-bar",
       "label": "pih.app.hivWeightGraph.title",
-      "conceptId": "${concept.weightKG.uuid}",
-      "duringCurrentEnrollmentInProgram": "${program.infant.uuid}",
+      "conceptId": "3ce93b62-26fe-102b-80cb-0017a47871b2",
+      "duringCurrentEnrollmentInProgram": "dc1b588a-9b94-45e4-8346-71b7c9a24845",
       "maxResults": "100"
     }
   },
@@ -162,9 +162,9 @@
     "url": null,
     "extensions": [
       {
-        "extensionPointId": "${program.infant.uuid}.secondColumnFragments",
+        "extensionPointId": "dc1b588a-9b94-45e4-8346-71b7c9a24845.secondColumnFragments",
         "order": 1,
-        "requiredPrivilege": "${privilege.app_coreapps_patient_dashboard}",
+        "requiredPrivilege": "App: coreapps.patientDashboard",
         "require": null,
         "extensionParams": {
           "provider": "pihcore",
@@ -173,16 +173,16 @@
       }
     ],
     "config": {
-      "showAdmissionTypeAtLocation": "${location.nicu.uuid}"
+      "showAdmissionTypeAtLocation": "0ce2f6fb-6850-11ee-ab8d-0242ac120002"
     }
   },
   {
     "id": "infant.dashboard.currentEnrollment",
     "extensions": [
       {
-        "extensionPointId": "${program.infant.uuid}.secondColumnFragments",
+        "extensionPointId": "dc1b588a-9b94-45e4-8346-71b7c9a24845.secondColumnFragments",
         "order": 2,
-        "requiredPrivilege": "${privilege.app_coreapps_patient_dashboard}",
+        "requiredPrivilege": "App: coreapps.patientDashboard",
         "require": null,
         "extensionParams": {
           "provider": "coreapps",
@@ -194,19 +194,19 @@
       "widget": "programstatus",
       "icon": "fas fa-fw fa-stethoscope",
       "label": "coreapps.currentEnrollmentDashboardWidget.label",
-      "program": "${program.infant.uuid}",
+      "program": "dc1b588a-9b94-45e4-8346-71b7c9a24845",
       "locationTag": "Program Location",
-      "markPatientDeadOutcome": "${concept.patientDied.uuid}",
-      "dashboard": "${program.infant.uuid}"
+      "markPatientDeadOutcome": "3cdd446a-26fe-102b-80cb-0017a47871b2",
+      "dashboard": "dc1b588a-9b94-45e4-8346-71b7c9a24845"
     }
   },
   {
     "id": "infant.dashboard.previousEnrollments",
     "extensions": [
       {
-        "extensionPointId": "${program.infant.uuid}.secondColumnFragments",
+        "extensionPointId": "dc1b588a-9b94-45e4-8346-71b7c9a24845.secondColumnFragments",
         "order": 3,
-        "requiredPrivilege": "${privilege.app_coreapps_patient_dashboard}",
+        "requiredPrivilege": "App: coreapps.patientDashboard",
         "require": null,
         "extensionParams": {
           "provider": "coreapps",
@@ -218,11 +218,11 @@
       "widget": "programstatus",
       "icon": "fas fa-fw fa-stethoscope",
       "label": "coreapps.programHistoryDashboardWidget.label",
-      "program": "${program.infant.uuid}",
+      "program": "dc1b588a-9b94-45e4-8346-71b7c9a24845",
       "includeActive": false,
       "locationTag": "Program Location",
-      "markPatientDeadOutcome": "${concept.patientDied.uuid}",
-      "dashboard": "${program.infant.uuid}"
+      "markPatientDeadOutcome": "3cdd446a-26fe-102b-80cb-0017a47871b2",
+      "dashboard": "dc1b588a-9b94-45e4-8346-71b7c9a24845"
     }
   },
   {
@@ -231,9 +231,9 @@
     "label": "allergyui.allergies",
     "extensions": [
       {
-        "extensionPointId": "${program.infant.uuid}.secondColumnFragments",
+        "extensionPointId": "dc1b588a-9b94-45e4-8346-71b7c9a24845.secondColumnFragments",
         "order": 4,
-        "requiredPrivilege": "${privilege.app_coreapps_patient_dashboard}",
+        "requiredPrivilege": "App: coreapps.patientDashboard",
         "require": null,
         "extensionParams": {
           "provider": "allergyui",
@@ -250,9 +250,9 @@
     "url": "dispensing/patient.page?patientId={{patient.uuid}}",
     "extensions": [
       {
-        "extensionPointId": "${program.infant.uuid}.secondColumnFragments",
+        "extensionPointId": "dc1b588a-9b94-45e4-8346-71b7c9a24845.secondColumnFragments",
         "order": 5,
-        "requiredPrivilege": "${privilege.app_coreapps_patient_dashboard}",
+        "requiredPrivilege": "App: coreapps.patientDashboard",
         "require": null,
         "extensionParams": {
           "provider": "pihcore",
@@ -272,18 +272,18 @@
     "url": "/pihcore/patient/vaccinations.page?patientId={{patient.uuid}}",
     "extensions": [
       {
-        "extensionPointId": "${program.infant.uuid}.secondColumnFragments",
+        "extensionPointId": "dc1b588a-9b94-45e4-8346-71b7c9a24845.secondColumnFragments",
         "order": 6,
-        "requiredPrivilege": "${privilege.app_coreapps_patient_dashboard}",
+        "requiredPrivilege": "App: coreapps.patientDashboard",
         "require": null,
         "extensionParams": {
           "provider": "pihcore",
           "fragment": "dashboardwidgets/vaccinations",
           "fragmentConfig": {
             "vaccinations": [
-              "${concept.bcgVaccination.uuid}",
-              "${concept.polioVaccination.uuid}",
-              "${concept.measlesRubellaVaccination.uuid}"
+              "3cd4e004-26fe-102b-80cb-0017a47871b2",
+              "3cd42c36-26fe-102b-80cb-0017a47871b2",
+              "162586AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
             ]
           }
         }
@@ -297,9 +297,9 @@
     "url": "/pihcore/visit/visit.page?patient={{patient.uuid}}#/visitList",
     "extensions": [
       {
-        "extensionPointId": "${program.infant.uuid}.secondColumnFragments",
+        "extensionPointId": "dc1b588a-9b94-45e4-8346-71b7c9a24845.secondColumnFragments",
         "order": 7,
-        "requiredPrivilege": "${privilege.app_coreapps_patient_dashboard}",
+        "requiredPrivilege": "App: coreapps.patientDashboard",
         "require": null,
         "extensionParams": {
           "provider": "pihcore",
@@ -313,14 +313,14 @@
         "pihcore.temp"
       ],
       "concepts": [
-        "${concept.temperature.uuid}" 
+        "3ce939d2-26fe-102b-80cb-0017a47871b2" 
       ],
       "showTime": true,
       "minValue": "35.9",
       "maxValue": "38",
       "maxRecords": "5",
       "visitUrl": "/pihcore/visit/visit.page?patient={{patient.uuid}}&visit={{visit.uuid}}#/overview" ,
-      "duringCurrentEnrollmentInProgram": "${program.infant.uuid}"
+      "duringCurrentEnrollmentInProgram": "dc1b588a-9b94-45e4-8346-71b7c9a24845"
     }
   },
   {
@@ -330,9 +330,9 @@
     "url": "/coreapps/attachments/attachments.page?patient={{patient.uuid}}&patientId={{patient.patientId}}",
     "extensions": [
       {
-        "extensionPointId": "${program.infant.uuid}.secondColumnFragments",
+        "extensionPointId": "dc1b588a-9b94-45e4-8346-71b7c9a24845.secondColumnFragments",
         "order": 8,
-        "requiredPrivilege": "${privilege.app_coreapps_patient_dashboard}",
+        "requiredPrivilege": "App: coreapps.patientDashboard",
         "require": null,
         "extensionParams": {
           "provider": "coreapps",

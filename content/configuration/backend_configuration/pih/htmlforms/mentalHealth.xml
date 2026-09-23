@@ -178,7 +178,7 @@
         <span subform-parameter="encounter-provider-widget">
             <encounterProviderAndRole default="currentUser"
                                       encounterRole="4f10ad1a-ec49-48df-98c7-1391c6ac7f05"
-                                      providerRoles="${providerGroup.group4}"
+                                      providerRoles="62fbeae3-4e6f-4c35-8705-f3de10ab5b87,556ceee6-d899-43d4-a98b-7973ebc85b75,2fa6f8da-aa58-11e8-98d0-529269fb1459,7207ba62-027f-4f9b-be67-a9f7a8a3abcc,72a49488-2f7b-4cdc-a361-1f90cbb3d6bc"
                                       required="true"/>
         </span>
     </subform>
@@ -214,6 +214,16 @@
                     </repeat>
                     <obs conceptId="PIH:Type of referral role" answerConceptId="PIH:OTHER"
                          style="checkbox" commentFieldLabel=" " />
+                    <br/>
+
+                    <label>
+                        <uimessage code="If referred within facility, which department referred the patient?" />:
+                    </label>
+
+                    <repeat with="['PIH:2235'],['PIH:1651'],['PIH:9358'],['PIH:14907'],[PIH:14905']">
+                        <obs conceptId="PIH:14973" answerConceptId="{0}"
+                             style="checkbox"/>
+                    </repeat>
                 </div>
             </div>
         </div>
@@ -801,6 +811,11 @@
             </p>
 
         </div>
+    </section>
+
+    <section id="depression-scores" sectionTag="fieldset" headerTag="legend" headerStyle="title"
+             headerCode="Depression screening">
+        <subform path="configuration/pih/subforms/mental-health-phq9-gad7-scores.xml"/>
     </section>
 
     <section id="mh-interventions" sectionTag="fieldset" headerTag="legend" headerStyle="title"

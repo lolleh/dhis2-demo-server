@@ -133,7 +133,7 @@ This project also starts a local [OpenMRS](https://openmrs.org/) server running 
 
 - **URL**: `http://localhost:8090/openmrs` (O3 frontend at `http://localhost:8090/openmrs/spa`, redirected to the PIH login-location page until a session location is selected)
 - **Credentials**: username `admin`, password `Admin123`
-- **Image**: `partnersinhealth/pihsl-emr:latest` (OpenMRS 2.8.9 + Initializer 2.12 + PIH SL config, Java 17 / Tomcat 9). Override with `OPENMRS_IMAGE` in `.env`.
+- **Image**: built locally from `partnersinhealth/pihsl-emr:latest` (OpenMRS 2.8.9 + Initializer 2.12 + PIH SL config, Java 17 / Tomcat 9) plus the MOH branding and customizations tracked in this repo (`openmrs-image/Dockerfile`, see below). `docker compose up` builds it automatically (`pull_policy: build`); `OPENMRS_IMAGE` in `.env` only names the resulting image. To run the plain stock image instead, remove the `build:`/`pull_policy: build` keys from the `openmrs` service and set `OPENMRS_IMAGE=partnersinhealth/pihsl-emr:latest`.
 - **Database**: MySQL 5.7 (`openmrs-db` service, internal to the Docker network)
 
 The first start initializes a fresh OpenMRS database and runs the PIH SL Initializer config, which takes 20–30 minutes (a new `openmrs` healthcheck waits for a real HTTP response). The bridge waits for OpenMRS to become healthy before it starts.
@@ -150,6 +150,18 @@ The first start initializes a fresh OpenMRS database and runs the PIH SL Initial
 
 > The first boot is slow while the database and Initializer run — watch progress with `docker compose ps` (the `openmrs` service shows `healthy` when serving) or `docker compose logs -f openmrs`. The OpenMRS DB and data live in the named volumes `openmrs-pihsl-db-data` and `openmrs-pihsl-data`; wiping them resets OpenMRS to first boot.
 
+### Customizing the OpenMRS image
+
+The `openmrs` service builds its image locally from the stock `partnersinhealth/pihsl-emr:latest` each time the stack starts (`pull_policy: build`), layering this repo's customizations on top (`openmrs-image/Dockerfile`):
+
+- `content/configuration/backend_configuration/` → `/openmrs/distribution/openmrs_config/` (MOH branding, `sl.css` theme, htmlforms, check-in/registration flows, above-five register reports, `patientdashboard_registers_extension.json`, the `-mongo`/`-falaba`/`-sinkunia` site profiles, etc.)
+- `openmrs-image/spa/` → `/openmrs/distribution/openmrs_spa/` (O3 SPA login/branding: Ministry of Health logo, `moh-login.css` + `moh-login-logo.png`, app `config.json`/`base-config.json`/`index.html`/`logo.png`/`manifest`)
+- `openmrs-image/openmrs-distro.properties` → `/openmrs/distribution/` (default `pih.config = sierraLeone,sierraLeone-mongo`; still overridable via `OPENMRS_PIH_CONFIG`)
+- `openmrs-image/pihcore-2.2.0-SNAPSHOT.omod` → `/openmrs/distribution/openmrs_modules/` (pihcore carrying the SL registration id labels, `Voters ID` / `Driver's License`)
+- `RUN rm` of 15 stock data-export report descriptors, replaced by the custom above-five reports above
+
+Because `docker compose up` rebuilds on every start, edits to any of these files take effect with a plain `docker compose up -d --build openmrs` (or `docker compose up -d`).
+
 ### Configuration
 
 The `openmrs` and `openmrs-db` services read from `.env`. The PIH SL image uses `OMRS_*` env vars (`OMRS_DB_*`, `OMRS_ADMIN_USER_PASSWORD`, `OMRS_EXTRA_pih_config`, `OMRS_EXTRA_initializer_startup_load`, ...) which the compose file maps from the bridge-facing `OPENMRS_*` variables below:
@@ -157,8 +169,8 @@ The `openmrs` and `openmrs-db` services read from `.env`. The PIH SL image uses 
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `OPENMRS_URL` | `http://openmrs:8080/openmrs` | URL the bridge uses to reach OpenMRS |
-| `OPENMRS_IMAGE` | `partnersinhealth/pihsl-emr:latest` | OpenMRS Docker image |
-| `OPENMRS_PIH_CONFIG` | `sierraLeone,sierraLeone-kgh,sierraLeone-kgh-test` | PIH site config chain loaded at startup. Must match a profile shipped by the image: the stock image provides `sierraLeone`, `-kgh`, `-kgh-test`, `-wellbody`, `-wellbody-gladi`, `-wellbody-demo`; the locally-built `dhis2-demo-openmrs:moh-*` images also add `-mongo`, `-falaba`, `-sinkunia`. Set an unsupported profile and OpenMRS fails to start with `HTTP Status 500` / `Error loading PIH config`. |
+| `OPENMRS_IMAGE` | `dhis2-demo-openmrs:latest` | Name of the locally-built OpenMRS Docker image (built from `openmrs-image/Dockerfile`) |
+| `OPENMRS_PIH_CONFIG` | `sierraLeone,sierraLeone-kgh,sierraLeone-kgh-test` | PIH site config chain loaded at startup. Must match a profile shipped by the image: the stock image provides `sierraLeone`, `-kgh`, `-kgh-test`, `-wellbody`, `-wellbody-gladi`, `-wellbody-demo`; the built `openmrs-image/Dockerfile` image also adds `-mongo`, `-falaba`, `-sinkunia`. Set an unsupported profile and OpenMRS fails to start with `HTTP Status 500` / `Error loading PIH config`. |
 | `OPENMRS_USERNAME` | `admin` | OpenMRS API user (used by the bridge) |
 | `OPENMRS_PASSWORD` | `Admin123` | OpenMRS API password |
 | `OPENMRS_DB_NAME` | `openmrs` | MySQL database name |
@@ -308,6 +320,10 @@ docker compose up -d --build
 ```
 
 If the container is still starting from a stale image, remove it first: `docker compose rm -f my-app && docker compose up -d my-app`.
+
+### PIH Core fails to start: `Illegal mix of collations (utf8mb4_unicode_ci) and (utf8mb4_general_ci)`
+
+If you test the image against an ad-hoc MySQL container whose server collation is `utf8mb4_unicode_ci` (e.g. `--collation-server=utf8mb4_unicode_ci`), pihcore's `LiquibaseSetup` crashes on the `20260527-set-inborn-visit-attribute` changeset, `InitializerSetup` never runs, and programs/htmlforms stay empty. The compose file already passes `--character-set-server=utf8 --collation-server=utf8_general_ci` to `openmrs-db`; replicate that whenever you boot-test the image with a throwaway DB.
 
 ### OpenMRS shows `HTTP Status 500` / `Error loading PIH config`
 

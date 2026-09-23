@@ -73,9 +73,11 @@ services:
     ports:
       - "127.0.0.1:5435:5432"
 
-  # OpenMRS 2.8.9 + full PIH EMR module set + Initializer 2.12 + O3 SPA
-  # (partnersinhealth/pihsl-emr). Uses the OMRS_* env convention (see
-  # /openmrs/startup-init.sh inside the image).
+  # OpenMRS 2.8.9 + full PIH EMR module set + Initializer 2.12 + O3 SPA.
+  # Built locally from the stock partnersinhealth/pihsl-emr image + the tracked
+  # branding/config in content/ and openmrs-image/ (see openmrs-image/Dockerfile),
+  # so a fresh checkout reproduces the branded stack without any manual image.
+  # Uses the OMRS_* env convention (see /openmrs/startup-init.sh inside the image).
   openmrs-db:
     image: mysql:5.7
     command: "mysqld --character-set-server=utf8 --collation-server=utf8_general_ci"
@@ -96,7 +98,11 @@ services:
       retries: 20
 
   openmrs:
-    image: ${OPENMRS_IMAGE:-partnersinhealth/pihsl-emr:latest}
+    build:
+      context: .
+      dockerfile: openmrs-image/Dockerfile
+    image: ${OPENMRS_IMAGE:-dhis2-demo-openmrs:latest}
+    pull_policy: build
     depends_on:
       openmrs-db:
         condition: service_healthy
@@ -117,10 +123,10 @@ services:
       # full PIH SL module set + Initializer config run.
       OMRS_JAVA_MEMORY_OPTS: "-Xms512m -Xmx4g -XX:NewSize=128m"
       # PIH SL config profile loaded on startup. Must match a profile the image
-      # actually ships: the stock partnersinhealth/pihsl-emr image provides
-      # sierraLeone (+ -kgh, -kgh-test, -wellbody, -wellbody-gladi, -wellbody-demo)
-      # with this default; the locally-built dhis2-demo-openmrs:moh-* images add
-      # -mongo, -falaba and -sinkunia too. Switch with:
+      # actually ships. The stock partnersinhealth/pihsl-emr image provides
+      # sierraLeone (+ -kgh, -kgh-test, -wellbody, -wellbody-gladi, -wellbody-demo);
+      # the locally-built openmrs-image/Dockerfile adds -mongo, -falaba and
+      # -sinkunia too. Switch with:
       #   OPENMRS_PIH_CONFIG=sierraLeone,sierraLeone-falaba docker compose up -d openmrs
       OMRS_EXTRA_pih_config: ${OPENMRS_PIH_CONFIG:-sierraLeone,sierraLeone-kgh,sierraLeone-kgh-test}
       # Let Initializer load the baked-in PIH SL config on startup. 'continue_on_error'

@@ -1,9 +1,7 @@
 {
   "welcomeMessage": "Ministry of Health",
   "providerIdentifierPrefix": "K",
-
   "site": "KGH",
-
   "components": [
     "activeVisits",
     "adtO3",
@@ -53,7 +51,6 @@
     "wristbands"
   ],
   "idCardLabel": "KGH",
-
   "registrationConfig": {
     "allowManualEntryOfPrimaryIdentifier": true,
     "allowUnknownPatients": true,
@@ -61,17 +58,15 @@
       "bean:registerBaby"
     ]
   },
-
   "extraIdentifierTypes": [
     "eb201574-8abe-4393-9a8a-8d30a48a08ad",
-    "1a2acce0-7426-11e5-a837-0800200c9a66",
-    "badec513-cfbb-11ed-8b1c-0242ac120002"
+    "1a2acce0-7426-11e5-a837-0800200c9a66"
   ],
   "findPatientColumnConfig": [
     {
       "type": "identifier",
-      "value": "c09a1d24-7162-11eb-8aa6-0242ac110002",
-      "label": "ui.i18n.PatientIdentifierType.name.c09a1d24-7162-11eb-8aa6-0242ac110002",
+      "value": "1a2acce0-7426-11e5-a837-0800200c9a66",
+      "label": "ui.i18n.PatientIdentifierType.name.1a2acce0-7426-11e5-a837-0800200c9a66",
       "width": "80px"
     },
     {
@@ -96,14 +91,13 @@
     },
     {
       "type": "identifier",
-      "value": "1a2acce0-7426-11e5-a837-0800200c9a66",
-      "label": "ui.i18n.PatientIdentifierType.name.1a2acce0-7426-11e5-a837-0800200c9a66",
+      "value": "c09a1d24-7162-11eb-8aa6-0242ac110002",
+      "label": "ui.i18n.PatientIdentifierType.name.c09a1d24-7162-11eb-8aa6-0242ac110002",
       "width": "80px"
     }
   ],
   "globalProperties": {
     "edtriageapp.config": "sierraleone-kgh"
   },
-
   "dispositionConfig": "file:configuration/pih/pih-dispositions-sierraLeone-mcoe.json"
 }

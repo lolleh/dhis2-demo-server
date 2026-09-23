@@ -494,7 +494,7 @@
                     <span subform-parameter="encounter-provider-widget">
                         <encounterProviderAndRole default="currentUser"
                                                   encounterRole="98bf2792-3f0a-4388-81bb-c78b29c0df92"
-                                                  providerRoles="${providerGroup.group3}"
+                                                  providerRoles="72a49488-2f7b-4cdc-a361-1f90cbb3d6bc,2fa6f8da-aa58-11e8-98d0-529269fb1459,7207ba62-027f-4f9b-be67-a9f7a8a3abcc,2687b4be-3fd5-4e9d-8d10-9e2df18beeeb,1474c25d-4fae-46d4-9fce-c77cb17b6610,58fa14e6-e336-4e03-8811-22117027f25a,9a4b44b2-8a9f-11e8-9a94-a6cf71072f73"
                                                   required="true"/>
                     </span>
                     <span subform-parameter="encounter-location-widget">
