@@ -66,6 +66,14 @@ A local DHIS2 development environment using Docker Compose, with a pre-loaded Si
    - The first start downloads a ~200MB database — this takes a few minutes
 
 > `docker compose up -d` starts **all** default services: DHIS2, its PostgreSQL database, OpenMRS + its MySQL database, the bridge, and the app dev server. Only the sync instances (`web-sync`/`db-sync`) are excluded — see [Sync Profile](#sync-profile).
+>
+> **OpenMRS prerequisite:** the `openmrs` image is built from the reproducible distribution in `distro/target/distro/web`, which does not exist on a fresh clone. The first time, run the two distribution scripts before `up` (see [Building the OpenMRS distribution](#building-the-openmrs-distribution)):
+>
+> ```bash
+> bash scripts/seed-distro-maven-repo.sh   # one-time per machine: seeds ~/.m2 + materialized config
+> bash scripts/build-distro.sh             # offline SDK build -> distro/target/distro/web
+> docker compose up -d
+> ```
 
 ### Linux / macOS
 
@@ -76,6 +84,11 @@ A local DHIS2 development environment using Docker Compose, with a pre-loaded Si
 # Clone and start
 git clone https://github.com/lolleh/dhis2-demo-server
 cd dhis2-demo-server
+
+# OpenMRS: build the distribution first (one-time per machine, see
+# "Building the OpenMRS distribution" below), then start everything
+scripts/seed-distro-maven-repo.sh
+scripts/build-distro.sh
 docker compose up -d
 ```
 
@@ -154,9 +167,10 @@ The first start initializes a fresh OpenMRS database and runs the PIH SL Initial
 
 The `openmrs` service builds its image from the distribution assembled by the OpenMRS SDK. All war/omod/spa/owa artifacts are resolved fully **offline** from the local Maven repository, so the distribution is reproducible from a pinned stock image plus the tracked repo overlays — no network access to OpenMRS artifact repositories is required after seeding.
 
+**Prerequisites:** the scripts need `docker` (to extract the pinned `partnersinhealth/pihsl-emr:latest` image, pulled automatically if absent) and `mvn` + a JDK (Maven 3.9+, JDK 17 or newer). Everything below is idempotent and re-runnable.
+
 ```bash
-# 1. Seed ~/.m2 + the materialized config (one-time per machine; requires
-#    docker for the stock partnersinhealth/pihsl-emr image and maven for the plugin cache)
+# 1. Seed ~/.m2 + the materialized config (one-time per machine)
 scripts/seed-distro-maven-repo.sh
 
 # 2. Build the distribution into distro/target/distro/web (fully offline).
@@ -173,7 +187,7 @@ What each piece contributes:
 
 - **`distro/openmrs-distro.properties`** — the distribution manifest (module versions, war, OWA, SPA, content, PIH config defaults). Filtered from `openmrs-image/openmrs-distro.properties`, the resolved production baseline. `content.dhis2-demo-content=...` points at this repo's content package; the `omod.*` pins are identical to the stock PIH SL distribution.
 - **`content/`** — a Maven content module (`content/pom.xml` + `content/assembly.xml`) packaging the materialized OpenMRS configuration: the stock PIH SL config overlaid with the tracked `configuration/backend_configuration/` delta (MOH branding, `sl.css` theme, htmlforms, check-in/registration flows, above-five register reports, `patientdashboard_registers_extension.json`, the `-mongo`/`-falaba`/`-sinkunia` site profiles, etc.) minus the files listed in `content/exclusions.txt` (the 15 stock data-export report descriptors replaced by the custom reports). Only the delta is committed; `seed-distro-maven-repo.sh` materializes the full set into the gitignored `content/build/`.
-- **`distro/Dockerfile`** — builds `openmrs/openmrs-core:2.8.9` and copies the six distribution outputs (`openmrs_core/openmrs.war`, `openmrs_distro.properties` → `/openmrs/distribution/`, `openmrs_modules`, `openmrs_config`, `openmrs_owas`, `openmrs_spa`) into the image.
+- **`distro/Dockerfile`** — builds `openmrs/openmrs-core:2.8.9` and copies the six distribution outputs (`openmrs_core/openmrs.war`, `openmrs-distro.properties` → `/openmrs/distribution/`, `openmrs_modules`, `openmrs_config`, `openmrs_owas`, `openmrs_spa`) into the image.
 - **`openmrs-image/`** — provenance inputs: the resolved `openmrs-distro.properties` baseline, the branded `spa/` overlay (Ministry of Health logo, `moh-login.css` + `moh-login-logo.png`, app `config.json`/`base-config.json`/`index.html`/`logo.png`/`manifest`), and the patched `pihcore-2.2.0-SNAPSHOT.omod` carrying the SL registration id labels (`Voters ID` / `Driver's License`).
 
 Edits to any of the tracked overlay files take effect with a plain `scripts/build-distro.sh && docker compose up -d --build openmrs`.
