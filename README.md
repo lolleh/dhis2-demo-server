@@ -133,7 +133,7 @@ This project also starts a local [OpenMRS](https://openmrs.org/) server running 
 
 - **URL**: `http://localhost:8090/openmrs` (O3 frontend at `http://localhost:8090/openmrs/spa`, redirected to the PIH login-location page until a session location is selected)
 - **Credentials**: username `admin`, password `Admin123`
-- **Image**: built locally from `partnersinhealth/pihsl-emr:latest` (OpenMRS 2.8.9 + Initializer 2.12 + PIH SL config, Java 17 / Tomcat 9) plus the MOH branding and customizations tracked in this repo (`openmrs-image/Dockerfile`, see below). `docker compose up` builds it automatically (`pull_policy: build`); `OPENMRS_IMAGE` in `.env` only names the resulting image. To run the plain stock image instead, remove the `build:`/`pull_policy: build` keys from the `openmrs` service and set `OPENMRS_IMAGE=partnersinhealth/pihsl-emr:latest`.
+- **Image**: built from the reproducible OpenMRS distribution produced by the OpenMRS SDK (see [Building the OpenMRS distribution](#building-the-openmrs-distribution) below): OpenMRS 2.8.9 core + the full PIH SL module set + Initializer 2.12 + the MOH-branded O3 SPA, all resolved offline from a seeded `~/.m2` and assembled into `distro/target/distro/web`. `docker compose up` builds it automatically from `distro/Dockerfile` (`pull_policy: build`); `OPENMRS_IMAGE` in `.env` only names the resulting image. To run the plain stock image instead, remove the `build:`/`pull_policy: build` keys from the `openmrs` service and set `OPENMRS_IMAGE=partnersinhealth/pihsl-emr:latest`.
 - **Database**: MySQL 5.7 (`openmrs-db` service, internal to the Docker network)
 
 The first start initializes a fresh OpenMRS database and runs the PIH SL Initializer config, which takes 20–30 minutes (a new `openmrs` healthcheck waits for a real HTTP response). The bridge waits for OpenMRS to become healthy before it starts.
@@ -150,17 +150,33 @@ The first start initializes a fresh OpenMRS database and runs the PIH SL Initial
 
 > The first boot is slow while the database and Initializer run — watch progress with `docker compose ps` (the `openmrs` service shows `healthy` when serving) or `docker compose logs -f openmrs`. The OpenMRS DB and data live in the named volumes `openmrs-pihsl-db-data` and `openmrs-pihsl-data`; wiping them resets OpenMRS to first boot.
 
-### Customizing the OpenMRS image
+### Building the OpenMRS distribution
 
-The `openmrs` service builds its image locally from the stock `partnersinhealth/pihsl-emr:latest` each time the stack starts (`pull_policy: build`), layering this repo's customizations on top (`openmrs-image/Dockerfile`):
+The `openmrs` service builds its image from the distribution assembled by the OpenMRS SDK. All war/omod/spa/owa artifacts are resolved fully **offline** from the local Maven repository, so the distribution is reproducible from a pinned stock image plus the tracked repo overlays — no network access to OpenMRS artifact repositories is required after seeding.
 
-- `content/configuration/backend_configuration/` → `/openmrs/distribution/openmrs_config/` (MOH branding, `sl.css` theme, htmlforms, check-in/registration flows, above-five register reports, `patientdashboard_registers_extension.json`, the `-mongo`/`-falaba`/`-sinkunia` site profiles, etc.)
-- `openmrs-image/spa/` → `/openmrs/distribution/openmrs_spa/` (O3 SPA login/branding: Ministry of Health logo, `moh-login.css` + `moh-login-logo.png`, app `config.json`/`base-config.json`/`index.html`/`logo.png`/`manifest`)
-- `openmrs-image/openmrs-distro.properties` → `/openmrs/distribution/` (default `pih.config = sierraLeone,sierraLeone-mongo`; still overridable via `OPENMRS_PIH_CONFIG`)
-- `openmrs-image/pihcore-2.2.0-SNAPSHOT.omod` → `/openmrs/distribution/openmrs_modules/` (pihcore carrying the SL registration id labels, `Voters ID` / `Driver's License`)
-- `RUN rm` of 15 stock data-export report descriptors, replaced by the custom above-five reports above
+```bash
+# 1. Seed ~/.m2 + the materialized config (one-time per machine; requires
+#    docker for the stock partnersinhealth/pihsl-emr image and maven for the plugin cache)
+scripts/seed-distro-maven-repo.sh
 
-Because `docker compose up` rebuilds on every start, edits to any of these files take effect with a plain `docker compose up -d --build openmrs` (or `docker compose up -d`).
+# 2. Build the distribution into distro/target/distro/web (fully offline).
+#    The very first build on a fresh machine downloads the Maven plugin set
+#    (SDK, dependency, assembly, ...) once — run `scripts/build-distro.sh --online`
+#    for that; afterwards everything is served from the local cache.
+scripts/build-distro.sh
+
+# 3. Build the OpenMRS image and start (or rebuild the existing service)
+docker compose up -d --build openmrs
+```
+
+What each piece contributes:
+
+- **`distro/openmrs-distro.properties`** — the distribution manifest (module versions, war, OWA, SPA, content, PIH config defaults). Filtered from `openmrs-image/openmrs-distro.properties`, the resolved production baseline. `content.dhis2-demo-content=...` points at this repo's content package; the `omod.*` pins are identical to the stock PIH SL distribution.
+- **`content/`** — a Maven content module (`content/pom.xml` + `content/assembly.xml`) packaging the materialized OpenMRS configuration: the stock PIH SL config overlaid with the tracked `configuration/backend_configuration/` delta (MOH branding, `sl.css` theme, htmlforms, check-in/registration flows, above-five register reports, `patientdashboard_registers_extension.json`, the `-mongo`/`-falaba`/`-sinkunia` site profiles, etc.) minus the files listed in `content/exclusions.txt` (the 15 stock data-export report descriptors replaced by the custom reports). Only the delta is committed; `seed-distro-maven-repo.sh` materializes the full set into the gitignored `content/build/`.
+- **`distro/Dockerfile`** — builds `openmrs/openmrs-core:2.8.9` and copies the six distribution outputs (`openmrs_core/openmrs.war`, `openmrs_distro.properties` → `/openmrs/distribution/`, `openmrs_modules`, `openmrs_config`, `openmrs_owas`, `openmrs_spa`) into the image.
+- **`openmrs-image/`** — provenance inputs: the resolved `openmrs-distro.properties` baseline, the branded `spa/` overlay (Ministry of Health logo, `moh-login.css` + `moh-login-logo.png`, app `config.json`/`base-config.json`/`index.html`/`logo.png`/`manifest`), and the patched `pihcore-2.2.0-SNAPSHOT.omod` carrying the SL registration id labels (`Voters ID` / `Driver's License`).
+
+Edits to any of the tracked overlay files take effect with a plain `scripts/build-distro.sh && docker compose up -d --build openmrs`.
 
 ### Configuration
 
@@ -169,8 +185,8 @@ The `openmrs` and `openmrs-db` services read from `.env`. The PIH SL image uses 
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `OPENMRS_URL` | `http://openmrs:8080/openmrs` | URL the bridge uses to reach OpenMRS |
-| `OPENMRS_IMAGE` | `dhis2-demo-openmrs:latest` | Name of the locally-built OpenMRS Docker image (built from `openmrs-image/Dockerfile`) |
-| `OPENMRS_PIH_CONFIG` | `sierraLeone,sierraLeone-kgh,sierraLeone-kgh-test` | PIH site config chain loaded at startup. Must match a profile shipped by the image: the stock image provides `sierraLeone`, `-kgh`, `-kgh-test`, `-wellbody`, `-wellbody-gladi`, `-wellbody-demo`; the built `openmrs-image/Dockerfile` image also adds `-mongo`, `-falaba`, `-sinkunia`. Set an unsupported profile and OpenMRS fails to start with `HTTP Status 500` / `Error loading PIH config`. |
+| `OPENMRS_IMAGE` | `dhis2-demo-openmrs:latest` | Name of the locally-built OpenMRS Docker image (built from `distro/Dockerfile` after `scripts/build-distro.sh`) |
+| `OPENMRS_PIH_CONFIG` | `sierraLeone,sierraLeone-kgh,sierraLeone-kgh-test` | PIH site config chain loaded at startup. Must match a profile shipped by the image: the stock image provides `sierraLeone`, `-kgh`, `-kgh-test`, `-wellbody`, `-wellbody-gladi`, `-wellbody-demo`; the materialized config also adds `-mongo`, `-falaba`, `-sinkunia`. Set an unsupported profile and OpenMRS fails to start with `HTTP Status 500` / `Error loading PIH config`. |
 | `OPENMRS_USERNAME` | `admin` | OpenMRS API user (used by the bridge) |
 | `OPENMRS_PASSWORD` | `Admin123` | OpenMRS API password |
 | `OPENMRS_DB_NAME` | `openmrs` | MySQL database name |
